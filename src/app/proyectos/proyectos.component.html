@@ -1,0 +1,135 @@
+<div class="body">
+    <div class="flex justify-content-between">
+        <h1 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Proyecto</h1>
+        <div class="flex align-items-center justify-content-between">
+            <br>
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal(getEventValue($event), 'contains')"
+                    placeholder="Buscar..." />
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="card">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4 gap-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2 "
+                        styleClass="mb-4 gap-4" (click)="openNew()"></button>
+
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <div class="flex flex-wrap gap-3">
+                        <div class="flex align-items-center">
+                            <p-radioButton name="activo" value="a" [(ngModel)]="ingredient" inputId="ingredient"
+                                (ngModelChange)="checkChanged1($event)"></p-radioButton>
+                            <label for="ingredient2" class="ml-2">Pediente</label>
+                        </div>
+                        <div class="flex align-items-center">
+                            <p-radioButton name="inactivo" value="Cheese" [(ngModel)]="ingredient  "
+                                inputId="ingredient1" (ngModelChange)="checkChanged($event)"></p-radioButton>
+                            <label for="ingredient1" class="ml-2">Finalizado</label>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+            <p-table #dt [value]="proyectos" [rows]="5" [paginator]="true" [globalFilterFields]="['nombre']"
+                [tableStyle]="{ 'min-width': '25rem' }" [(selection)]="selectedProyectos" [rowHover]="true" dataKey="id"
+                [showCurrentPageReport]="true">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="nombre" style="min-width:6rem">Nombre</th>
+                        <th pSortableColumn="" style="min-width:5rem">Fecha de aprovación</th>
+                        <th pSortableColumn="" style="min-width:5rem">Fecha de inicio</th>
+                        <th pSortableColumn="" style="min-width:5rem">Fecha de finalización</th>
+                        <th pSortableColumn="" style="min-width:5rem">Imagen</th>
+                        <th pSortableColumn="" style="min-width:5rem">Inversión </th>
+                        <th pSortableColumn="" style="min-width:5rem">Descripcion</th>
+                        <th pSortableColumn="" style="min-width:5rem">Miembro</th>
+                        <th pSortableColumn="" style="min-width:5rem">Estado</th>
+                        <th style="min-width:10rem"></th>
+
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-proyecto>
+                    <tr>
+                        <td>{{ proyecto.nombre }}</td>
+                        <td>{{ proyecto.fechaAprovacion | date:"dd/MM/yyyy" }}</td>
+                        <td>{{ proyecto.fechaInicio | date:"dd/MM/yyyy" }}</td>
+                        <td>{{ proyecto.fechaFinalizacion | date:"dd/MM/yyyy" }}</td>
+
+                        <td *ngIf="proyecto.imagen != null && proyecto.imagen != '' "><img
+                                [src]=" 'assets/images/miembros/' + proyecto.imagen" [alt]="proyecto.estado" width="100"
+                                class="shadow-4" /></td>
+                        <td *ngIf="proyecto.imagen == null || proyecto.imagen == '' "><img
+                                src=" assets/images/miembros/no.jpg" alt="'No imagen'" width="100" class="shadow-4" />
+                        </td>
+                        <td>{{ "$ "+ proyecto.inversion }}</td>
+                        <td>{{ proyecto.descripcion}}</td>
+                        <td>{{ proyecto.miembro.asociado.nombre }}</td>
+                        <td >{{ proyecto.estado == 'P' ? 'Pendiente':'Finalizado' }}</td>
+                        <td *ngIf="proyecto.estado =='P' ">
+                            <button pButton pRipple icon="bi bi-pencil-square" class="p-button-rounded p-button-success mr-2" style="color: black;"
+                                (click)="editIng(proyecto)"></button>
+                            <button pButton pRipple icon="fas fa-check"  class="p-button-rounded p-button-info mr-2" style="color: black;"
+                                (click)="changeState(proyecto ,estado= 'F')"></button>
+
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-dialog [(visible)]="proDialong" [style]="{ width: '550px' }" header="{{title}}" [modal]="true"
+            styleClass="p-fluid">
+
+            <ng-template pTemplate="content">
+                <div class="field">
+                    <label for="nombre">Nombre:</label><br>
+                    <input type="text" pInputText [(ngModel)]="proyecto.nombre" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !proyecto.nombre">Nombre es requerida!</small>
+                </div>
+                <div class="field">
+                    <label for="name">Descripcion:</label><br>
+                    <input type="text" pInputText [(ngModel)]="proyecto.descripcion" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !proyecto.descripcion">Nombre es requerida!</small>
+                </div>
+                <div class="field ">
+                    <label for="name">Fecha de inicio: </label><br>
+                    <p-calendar [(ngModel)]="date" [showIcon]="true"></p-calendar>
+                    <small class="p-error" *ngIf="submitted && !proyecto.fechaInicio">es requerida!</small>
+                </div>
+                <div class="field ">
+                    <label for="name">Fecha de finalizacion: </label><br>
+                    <p-calendar [(ngModel)]="date1" [showIcon]="true"></p-calendar>
+                    <small class="p-error" *ngIf="submitted && !proyecto.fechaFinalizacion">es requerida!</small>
+                </div>
+                <div class="col mb-3">
+                    <label for="formFile">Seleccione una Image</label>
+                    <input class="form-control" type="file" id="formFile" (change)="seleccionarImagen($event)"
+                        accept="image/*" />
+                </div>
+                <div class="field">
+                    <label for="name">Inversión:</label><br>
+                    <input type="number" pInputText [(ngModel)]="proyecto.inversion" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !proyecto.inversion">Nombre es requerida!</small>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
+                    *ngIf="!proyecto.id else elseBlock" (click)="create()"></button>
+                <ng-template #elseBlock>
+                    <button pButton pRipple label="Actualizar" icon="pi pi-check" class="p-button-text"
+                        (click)="update()"></button>
+                </ng-template>
+            </ng-template>
+
+        </p-dialog>
+
+        <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+<div class="body">
+    <div class="flex align-items-center justify-content-between">
+        <h1 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Periodos</h1>
+        <span class="p-input-icon-right">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="dt.filterGlobal(getEventValue($event), 'contains')"
+                placeholder="Buscar..." />
+        </span>
+    </div>
+    <div class="card-body">
+        <p-toast></p-toast>
+        <div class="card">
+            <p-table #dt [value]="periodos" [rows]="5" [paginator]="true" [globalFilterFields]="['fechaInicio']"
+                [tableStyle]="{ 'min-width': '25rem' }" [(selection)]="selectedPeriodos" [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2 "
+                            styleClass="mb-4 gap-4" (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="fechaInicio" style="min-width:5rem">Año Inicio</th>
+                        <th pSortableColumn="final" style="min-width:5rem">Año Final</th>
+                        <th pSortableColumn="" style="min-width:5rem"></th>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-periodo>
+                    <tr>
+                        <td>{{ periodo.fechaInicio }}</td>
+                        <td>{{ periodo.fechaFinal }}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                                (click)="editPeriodo(periodo)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <p-dialog [(visible)]="perDialog" [style]="{ width: '450px' }" header="{{title}}" [modal]="true"
+        styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <div class="field">
+                <label for="name">Fecha de Inicio</label><br>
+                <input type="number" pInputText [(ngModel)]="periodo.fechaInicio" required autofocus
+                    pattern="[0-9]{4}" />
+                <small class="p-error" *ngIf="submitted && !periodo.fechaInicio">Es necesario!</small>
+            </div>
+            <div class="field">
+                <label for="name">Fecha de Final</label><br>
+                <input type="number" pInputText [(ngModel)]="periodo.fechaFinal" required autofocus />
+                <small class="p-error" *ngIf="submitted && !periodo.fechaFinal">Es necesario!</small>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                (click)="hideDialog()"></button>
+            <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
+                *ngIf="!periodo.id else elseBlock" (click)="create()"></button>
+            <ng-template #elseBlock>
+                <button pButton pRipple label="Actualizar" icon="pi pi-check" class="p-button-text"
+                    (click)="update()"></button>
+            </ng-template>
+        </ng-template>
+    </p-dialog>
+
+    <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+</div>

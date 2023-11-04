@@ -1,0 +1,131 @@
+<div class="body">
+    <div class="flex justify-content-between">
+        <h1 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Fiesta Patronales</h1>
+
+    </div>
+    <div class="card-body">
+        <div class="card">
+            <p-toast></p-toast>
+            <div class=" card-footer flex align-items-center justify-content-between">
+                <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                    styleClass="mb-4 gap-4" (click)="openNew()"></button>
+                <div class="flex align-items-center justify-content-between">
+                    <br>
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+
+                    </span>
+                </div>
+            </div>
+
+            <table #dt class="fiesta-table" tableStyle="{ 'min-width': '25rem' }">
+                <tr>
+                    <th style="min-width:6rem">Descripción</th>
+                    <th style="min-width:6rem">Fecha de inicio</th>
+                    <th style="min-width:6rem">Fecha de fin</th>
+                    <th style="min-width:6rem">Actividades</th>
+                </tr>
+                <ng-container *ngFor="let fiesta of fiestasPatronales | slice:first:first + rows">
+                    <tr class="hola">
+                        <td>{{ fiesta.descripcion }}</td>
+                        <td>{{ fiesta.fechaInicio | date:"dd/MM/yyyy" }}</td>
+                        <td>{{ fiesta.fechaFin | date:"dd/MM/yyyy" }}</td>
+                        <td>
+                            <button pButton type="button" icon="pi pi-list" (click)="verActividades(fiesta)"
+                                class="p-button-success p-button-rounded mr-3" style="color: black;">
+                            </button>
+                            <button pButton pRipple icon="fas fa-trash" class="p-button-rounded p-button-danger mr-3"
+                                style="color: black;" (click)="deleteFiesta(fiestaPatronal)">
+                            </button>
+                            <button pButton pRipple icon="bi bi-pencil-square"
+                                class="p-button-rounded p-button-icon " style="color: black;"
+                                (click)="editIng(fiesta)">
+                            </button>
+
+                        </td>
+                    </tr>
+                </ng-container>
+            </table>
+            <div class="pagination justify-content-center">
+                <button pButton type="button" icon="pi pi-chevron-left" (click)="onPageChange(-1)"
+                    [disabled]="first === 0" class="p-button-rounded"></button>
+                <span class="page-info">Página {{ roundToInteger(first / rows) + 1 }} de {{ roundToInteger(totalRecords
+                    /
+                    rows) }}</span>
+                <button pButton class="p-button-rounded" type="button" icon="pi pi-chevron-right"
+                    (click)="onPageChange(1)" [disabled]="first + rows >= totalRecords"></button>
+            </div>
+        </div>
+
+        <p-dialog [(visible)]="displayDialog" header="Actividades" [modal]="true" [responsive]="true"
+            [maximizable]="false" [style]="{width: '50rem', borderRadius: '10px',}">
+            <table class="table-details">
+                <thead>
+                    <tr class="table-header">
+                        <th>Descripción</th>
+                        <th>Fecha Realizada</th>
+                        <th>Imagen</th>
+                        <th>Miembro</th>
+                        <th>Tipo de Actividad</th>
+                        <th>Fiesta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let actividad of actividades" class="table-cell">
+                        <td>{{ actividad.descripcion }}</td>
+                        <td>{{ actividad.fechaRealizada | date:"dd/MM/yyyy" }}</td>
+                        <td>
+                            <ng-container *ngIf="actividad.imagen; else noImage">
+                                <img [src]="'assets/images/miembros/' + actividad.imagen" [alt]="actividad.imagen"
+                                    width="100" class="activity-image p-shadow-4" />
+                            </ng-container>
+                            <ng-template #noImage>
+                                <img src="assets/images/miembros/no.jpg" alt="'No imagen'" width="100"
+                                    class="activity-image p-shadow-4" />
+                            </ng-template>
+                        </td>
+                        <td>{{ actividad.miembro.asociado.nombre }}</td>
+                        <td>{{ actividad.tipo.nombre }}</td>
+                        <td>{{ actividad.fiesta.descripcion }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </p-dialog>
+        <p-dialog [(visible)]="fiestaDialog" [style]="{ width: '450px' }" header="{{title}}" [modal]="true"
+            styleClass="p-fluid"><br>
+            <ng-template pTemplate="content">
+                <div class="field-5 mb-5">
+                    <label for="nombre">Nombre:</label><br><br>
+                    <input type="text" pInputText id="nombre" [(ngModel)]="fiestaPatronal.descripcion" required
+                        autofocus />
+                    <small class="p-error" *ngIf="submitted && !fiestaPatronal.descripcion"> es requerida!</small>
+                </div><br>
+                <div class="field-5  mb-5 ">
+                    <label for="name">Fecha de inicio: (mes/dia/año) </label><br><br>
+                    <p-calendar [(ngModel)]="date" [showIcon]="true"></p-calendar>
+                    <small class="p-error" *ngIf="submitted && !fiestaPatronal.fechaInicio">es requerida!</small>
+                </div><br>
+                <div class="field-5  ">
+                    <label for="name">Fecha de finalizacion: (mes/dia/año)</label><br><br>
+                    <p-calendar [(ngModel)]="date1" [showIcon]="true"></p-calendar>
+                    <small class="p-error" *ngIf="submitted && !fiestaPatronal.fechaFin">es requerida!</small>
+                </div>
+
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
+                    *ngIf="!fiestaPatronal.id else elseBlock" (click)="create()"></button>
+                <ng-template #elseBlock>
+                    <button pButton pRipple label="Actualizar" icon="pi pi-check" class="p-button-text"
+                        (click)="update()"></button>
+                    <!-- (click)="update()" -->
+                </ng-template>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+
+</div>

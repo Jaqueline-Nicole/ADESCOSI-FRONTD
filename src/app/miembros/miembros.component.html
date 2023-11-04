@@ -1,0 +1,127 @@
+<div class="body">
+    <div class="flex align-items-center justify-content-between">
+        <h1 class="m-0"> Listado de miembros</h1>
+        <div class="flex align-items-center justify-content-between">
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal(getEventValue($event), 'contains')"
+                    placeholder="Buscar..." />
+            </span>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="card">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4 gap-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                        (click)="openNew()"></button>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <div class="flex flex-wrap gap-3">
+                        <div class="flex align-items-center">
+                            <p-radioButton name="activo" value="a" [(ngModel)]="ingredient" inputId="ingredient"
+                                (ngModelChange)="checkChanged1($event)"></p-radioButton>
+                            <label for="ingredient2" class="ml-2">Activo</label>
+                        </div>
+                        <div class="flex align-items-center">
+                            <p-radioButton name="inactivo" value="Cheese" [(ngModel)]="ingredient  "
+                                inputId="ingredient1" (ngModelChange)="checkChanged($event)"></p-radioButton>
+                            <label for="ingredient1" class="ml-2">Inactivo</label>
+                        </div>
+                    </div>
+                </ng-template>
+
+            </p-toolbar>
+
+            <p-table #dt [value]="miembros" [rows]="5" [paginator]="true" [globalFilterFields]="['asociado.nombre']"
+                [tableStyle]="{ 'min-width': '35rem' }" [rowHover]="true" dataKey="id"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true">
+
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="estado" style="min-width:6rem">Estado</th>
+                        <th pSortableColumn="image" style="min-width:3rem">Imagen</th>
+                        <th pSortableColumn="cargo.nombre" style="min-width:6rem">Cargo</th>
+                        <th pSortableColumn="asociado.nombre" style="min-width:6rem">Asociado</th>
+                        <th pSortableColumn="periodo.fechaInicio" style="min-width:3rem">Periodo</th>
+                        <th style="min-width:5rem"></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-miembro>
+                    <tr>
+                        <td>{{ miembro.estado == 'A' ? 'Activo/a': 'Inactivo' }}</td>
+                        <td *ngIf="miembro.imagen != null && miembro.imagen != '' "><img
+                                [src]=" 'assets/images/miembros/' + miembro.imagen" [alt]="miembro.estado" width="100"
+                                class="shadow-4" /></td>
+                        <td *ngIf="miembro.imagen == null || miembro.imagen == '' "><img
+                                src=" assets/images/miembros/no.jpg" alt="'No imagen'" width="100" class="shadow-4" />
+                        </td>
+                        <td>{{ miembro.cargo.nombre }}</td>
+                        <td>{{ miembro.asociado.nombre }}</td>
+                        <td>{{ miembro.periodo.fechaInicio +"-"+ miembro.periodo.fechaFinal }}</td>
+
+                        <td>
+                            <button pButton pRipple icon="bi bi-pencil-square"
+                                class="p-button-rounded p-button-success mr-2" (click)="editMiembr(miembro)"
+                                style="color:black"></button>
+                            <button pButton pRipple icon="pi pi-arrow-right-arrow-left"
+                                class="p-button-rounded p-button-warning" style="color:black"
+                                (click)="deleteMiembro(estado = 'I', miembro)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+
+    <p-dialog [(visible)]="mieDialong" [style]="{ width: '650px' }" header="{{title}}" [modal]="true"
+        styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <img [src]="'assets/images/miembros/' + miembro.imagen" [alt]="miembro.imagen" class="product-image w-50"
+                *ngIf="miembro.imagen" />
+            <img class="product-image" *ngIf="!miembro.imagen" />
+
+            <div class="formgrid grid row">
+                <div class="field col-6">
+                    <label for="cargo">cargo</label>
+                    <p-dropdown [options]="cargos" [(ngModel)]="miembro.cargo" optionLabel="nombre"></p-dropdown>
+                </div>
+                <div class="field col-6">
+                    <label for="periodo">periodo</label>
+                    <p-dropdown [options]="periodos" [(ngModel)]="miembro.periodo"
+                        optionLabel="fechaInicio"></p-dropdown>
+                </div>
+                <div class="field col-12">
+                    <label for="asociado">asociado</label>
+                    <p-dropdown [options]="asociados" [(ngModel)]="miembro.asociado" optionLabel="nombre"></p-dropdown>
+                </div>
+                <div class="col col-12 ">
+                    <label for="formFile" class="mb-2">Seleccione una Image:</label><br>
+                    <input class="form-control" type="file" id="formFile" (change)="seleccionarImagen($event)"
+                        accept="image/*" />
+
+                </div>
+            </div>
+
+
+
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                (click)="hideDialog()"></button>
+            <button pButton pRipple label="Guardar" *ngIf="!miembro.id else elseBlock" icon="pi pi-check"
+                class="p-button-text" (click)="create()"></button>
+            <ng-template #elseBlock>
+                <button pButton pRipple label="Actualizar" icon="pi pi-times" class="p-button-text"
+                    (click)="update()"></button>
+            </ng-template>
+        </ng-template>
+    </p-dialog>
+    <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+</div>

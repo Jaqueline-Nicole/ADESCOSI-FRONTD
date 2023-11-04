@@ -1,0 +1,38 @@
+<div class="sidenav" [ngClass]="collapsed ? 'sidenav-collapsed':'' " 
+>
+    <div class="logo-container">
+        <button class="logo" (click)="toggleCollapse()">A</button>
+        <div class="logo-text" @fadeInOut *ngIf="collapsed">
+            <label for="">ADESCO</label>
+        </div>
+        <button icon="close" class="btn-close" @rotate *ngIf="collapsed" (click)="closeSidenav()" style="color: white;">
+        </button>
+    </div>
+    <div class="scrollwrap scrollwrap_delayed">
+        <ul class="sidenav-nav">
+            <!-- cargos -->
+            <li class="sidenav-nav-item" *ngFor="let data of navData ">
+                <a class="sidenav-nav-link" (click)="handleClick(data)" *ngIf="data.items && data.items.length > 0">
+                    <mat-icon class="sidenav-link-icon" fontIcon="{{data.icon}}" (click)="toggleCollapse()"></mat-icon>
+                    <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+                        {{ data.label}}
+                    </span>
+                    <mat-icon *ngIf="data.items && collapsed" class="menu-collapse-icon">
+                        {{ !data.expanded ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}
+                    </mat-icon>
+                </a>
+                <a class="sidenav-nav-link" *ngIf="!data.items || (data.items && data.items.length === 0)"
+                    [routerLink]="[data.routeLink]" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                    <mat-icon class="sidenav-link-icon" fontIcon="{{data.icon}}" (click)="toggleCollapse()"></mat-icon>
+                    <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">{{ data.label}}</span>
+                </a>
+                <div *ngIf="collapsed && data.items && data.items.length > 0" >
+                    <app-sublevel-menu [data]="data" [collapsed]="collapsed" [multiple]="multiple"
+                        [expanded]="data.expanded"></app-sublevel-menu>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+
+</div>

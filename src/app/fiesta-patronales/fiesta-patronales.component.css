@@ -1,0 +1,154 @@
+.fiesta-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+.fiesta-title {
+    font-size: 1.5rem;
+    margin: 0 0 10px;
+    font-weight: bold;
+}
+
+.container {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.p-button.p-button-primary {
+    margin-top: 10px;
+    background-color: #005994;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+}
+
+.fiesta-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 20px;
+
+}
+
+.fiesta-table th {
+    color: black;
+    padding: 10px;
+    border-bottom: 1px solid #DEE2E6;
+    background-color: #F8F9FA;
+    padding: 20px 20px;
+
+    font-size: 16px;
+}
+
+.fiesta-table th:hover {
+    background-color: #E9ECEF;
+}
+
+.fiesta-table td {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+}
+
+.fiesta-table tr {
+    background-color: 1px solid #1775f1;
+}
+
+.activity-image {
+    border: 1px solid #ccc;
+    max-width: 100px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: auto;
+}
+
+.fiesta-table tbody tr:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Estilos adicionales */
+
+.p-dialog {
+    margin-top: 10px;
+}
+
+.footer {
+    margin-bottom: 10px;
+}
+
+/* Estilos para la tabla en el diálogo de detalles */
+.table-details {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.table-details thead th {
+    background-color: aquamarine;
+    padding: 20px 20px;
+
+}
+
+.table-details thead th:hover {
+    background-color: rgb(131, 127, 255);
+    padding: 20px 20px;
+
+}
+
+/* Estilos para el encabezado de la tabla en el diálogo de detalles */
+.table-header {
+    color: black;
+    text-align: center;
+    padding: 10px;
+}
+
+.table-header:hover {
+    background-color: #E2E4E9;
+}
+
+/* Estilos para las celdas de la tabla en el diálogo de detalles */
+.table-cell {
+    text-align: center;
+    padding: 10px;
+}
+
+.table-cell:hover {
+    background: #E2E5EA;
+}
+
+/* Estilos para la imagen de actividad en el diálogo de detalles */
+.activity-image {
+    border: 1px solid #ccc;
+    max-width: 100px;
+    height: auto;
+}
+
+/* Estilo personalizado para los botones de paginación */
+.custom-pagination-button {
+    color: white;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+/* Estilo personalizado para la información de la página actual */
+.page-info {
+    font-size: 16px;
+    margin: 0 10px;
+}
+
+/* Estilo personalizado para la tabla */
+
+.fiesta-table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.hola:hover {
+    background-color: #E9ECEF;
+}

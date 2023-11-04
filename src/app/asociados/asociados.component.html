@@ -1,0 +1,143 @@
+<div class="body">
+    <div class="flex justify-content-between">
+        <h1 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Asociados</h1>
+        <div class="flex align-items-center justify-content-between">
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <!-- <i class="bi bi-skull"></i> -->
+                <input pInputText type="text" (input)="dt.filterGlobal(getEventValue($event), 'contains')"
+                    placeholder="Buscar..." />
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="card">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4 gap-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                        (click)="openNew()"></button>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <div class="flex flex-wrap gap-3">
+                        <div class="flex align-items-center">
+                            <p-radioButton name="pizza" value="a" [(ngModel)]="ingredient" inputId="ingredient3"
+                                (ngModelChange)="checkChanged3($event)"></p-radioButton>
+                            <label for="ingredient2" class="ml-2">Activo</label>
+                        </div>
+                        <div class="flex align-items-center">
+                            <p-radioButton name="pizza" value="Cheese" [(ngModel)]="ingredient" inputId="ingredient1"
+                                (ngModelChange)="checkChanged($event)"></p-radioButton>
+                            <label for="ingredient1" class="ml-2">Inactivo</label>
+                        </div>
+                        <div class="flex align-items-center">
+                            <p-radioButton name="pizza" value="Mushroom" [(ngModel)]="ingredient" inputId="ingredient2"
+                                (ngModelChange)="checkChanged2($event)"></p-radioButton>
+                            <label for="ingredient2" class="ml-2">Fallecido</label>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="asociados" [rows]="5" [paginator]="true" [globalFilterFields]="['nombre']"
+                [tableStyle]="{ 'min-width': '35rem' }" [(selection)]="selectedAsociados" [rowHover]="true" dataKey="id"
+                [showCurrentPageReport]="true">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="nombre" style="min-width:10rem">Nombre</th>
+                        <th pSortableColumn="fechaNacimiento" style="min-width:10rem">Fecha de nacimiento</th>
+                        <th pSortableColumn="lugarNacimiento" style="max-width:10rem">Lugar de nacimiento</th>
+                        <th pSortableColumn="estado" style="min-width:7rem">Estado </th>
+                        <th pSortableColumn="estadoCivil" style="min-width:7rem">Estado Civil</th>
+                        <th pSortableColumn="" style="min-width:13rem"></th>
+
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-asociado>
+                    <tr>
+                        <td >{{ asociado.nombre }}</td>
+                        <td>{{ asociado.fechaNacimiento | date:"dd/MM/yyyy" }}</td>
+                        <td>{{ asociado.lugarNacimiento }}</td>
+                        <td>{{ asociado.estado == 'A' ? 'Activo/a': (asociado.estado == 'I'?'Inactivo':'Fallecido') }}
+                        </td>
+                        <td>{{ asociado.estadoCivil == 'C' ? 'Casado/a':(asociado.estadoCivil == 'S' ?
+                            'Soltero/a':(asociado.estadoCivil == 'D' ? 'Divorciado/a':'Viudo/a'))}}</td>
+                        <td>
+                            <button pButton pRipple *ngIf="asociado.estado !=='F' && asociado.estado !=='I' " icon="bi bi-pencil-square"
+                                style="color:black" class="p-button-rounded p-button-success mr-2"
+                                (click)="editAsociado(asociado)"></button>
+
+                            <button pButton pRipple *ngIf="asociado.estado !=='F' " icon="pi pi-arrow-right-arrow-left"
+                                style="color:black" class="p-button-rounded p-button-warning mr-2"
+                                (click)="deleteAsociado(asociado)"></button>
+
+                            <button pButton pRipple *ngIf="asociado.estado !=='F' " icon="fas fa-skull"
+                                class="p-button-rounded p-button-danger" style="color: black;"
+                                (click)="delete(estado ='F', asociado )"></button>
+
+
+                        </td>
+                    </tr>
+                </ng-template>
+                <!--<ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-between">Total {{ asociado ?
+                        asociados.length : 0 }} cargos.
+                    </div>
+                </ng-template>-->
+            </p-table>
+        </div>
+        <p-dialog [(visible)]="asoDialog" [style]="{ width: '30rem' }" header="{{title}}" [modal]="true"
+            styleClass="p-fluid"><br>
+            <ng-template pTemplate="content">
+                <div class=" file col-12 mb-1">
+                    <!-- <h3 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Nombre:</h3> -->
+                    <label class="mb-1"><b>Nombre:</b></label>
+                    <div class="p-inputgroup ">
+                        <input pInputText placeholder="Nombre" [(ngModel)]="asociado.nombre" />
+                        <span class="p-inputgroup-addon" style="background-color: #3B82F6;">
+                            <i class="pi pi-user" style="color: white;"></i>
+                        </span>
+                    </div>
+                    <small class="p-error" *ngIf="submitted && !asociado.nombre">es requerida!</small>
+                </div>
+                <div class="file col-12">
+                    <label class="mb-1"><b>Lugar de nacimiento:</b></label>                    
+                    <div class="p-inputgroup">
+                        <input pInputText placeholder="Lugar" [(ngModel)]="asociado.lugarNacimiento" />
+                        <span class="p-inputgroup-addon" style="background-color: #3B82F6;">
+                            <i class="fa-solid fa-location-dot" style="color: white;"></i>
+                        </span>
+                    </div>
+                    <small class="p-error" *ngIf="submitted && !asociado.lugarNacimiento">El nombre es necesario!</small>
+
+                </div>
+                <div class="field col-12"><br>
+                    <label class="mb-1"><b>Estado civil:</b></label>
+                    <p-dropdown [options]="estadosCiviles" [(ngModel)]="selectedEstadoCivil"
+                        optionLabel="nombre"></p-dropdown>
+                    <div #sig></div>
+                </div>
+                <div class="field col-12">
+                    <label class="mb-1"><b>Fecha de nacimiento:</b> (mes/dia/año)</label>                    
+                    <p-calendar  [showIcon]="true" [(ngModel)]="date"></p-calendar>
+                    <small class="p-error" *ngIf="submitted && !asociado.fechaNacimiento">La fecha es requerida y no puede ser menor de 18 años</small>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
+                    *ngIf="!asociado.id else elseBlock" (click)="create()"></button>
+                <ng-template #elseBlock>
+                    <button pButton pRipple label="Actualizar" icon="pi pi-check" class="p-button-text"
+                        (click)="update()"></button>
+                </ng-template>
+            </ng-template>
+
+        </p-dialog>
+
+        <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+    </div>
+</div>

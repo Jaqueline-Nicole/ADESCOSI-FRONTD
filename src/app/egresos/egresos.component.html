@@ -1,0 +1,109 @@
+<div class="body">
+    <div class="flex justify-content-between">
+        <h1 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Egresos</h1>
+        <div class="flex align-items-center justify-content-between">
+            <br>
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal(getEventValue($event), 'contains')"
+                    placeholder="Buscar..." />
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="card">
+            <p-toast></p-toast>
+            <p-table #dt [value]="egresos" [rows]="1" [paginator]="true" [globalFilterFields]="['tipoEgreso.nombre']"
+                [tableStyle]="{ 'min-width': '5rem' }" [(selection)]="selectedEgresos" [rowHover]="true" dataKey="id"
+                [showCurrentPageReport]="true">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2 "
+                            styleClass="mb-4 gap-4" (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="" style="min-width:1rem">Cantidad</th>
+                        <th pSortableColumn="" style="min-width:5rem">Fecha de registro</th>
+                        <th pSortableColumn="" style="min-width:5rem">Imagen</th>
+                        <th pSortableColumn="" style="min-width:5rem">Descripcion</th>
+                        <th pSortableColumn="" style="min-width:10rem">Tipo de egreso</th>
+                        <th pSortableColumn="" style="min-width:5rem">Miembro</th>
+                        <th pSortableColumn="" style="min-width:5rem">Fecha de pago</th>
+                        <th pSortableColumn="" style="min-width:5rem"></th>
+
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-egreso>
+                    <tr>
+                        <td>{{ egreso.cantidad }}</td>
+                        <td>{{ egreso.fechaRegistro | date:"dd/MM/yyyy" }}</td>
+
+                        <td *ngIf="egreso.imagen != null && egreso.imagen != '' "><img
+                                [src]=" 'assets/images/miembros/' + egreso.imagen" [alt]="egreso.imagen" width="100"
+                                class="shadow-4" /></td>
+                        <td *ngIf="egreso.imagen == null || egreso.imagen == '' "><img
+                                src=" assets/images/miembros/no.jpg" alt="'No imagen'" width="100" class="shadow-4" />
+                        </td>
+                        <td>{{ egreso.descripcion }}</td>
+                        <td>{{ egreso.tipoEgreso.nombre }}</td>
+                        <td>{{ egreso.miembro.asociado.nombre }}</td>
+                        <td>{{ egreso.fechaPago | date:"dd/MM/yyyy"}}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                                (click)="editIng(egreso)"></button>
+
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-dialog [(visible)]="egrDialong" [style]="{ width: '550px' }" header="{{title}}" [modal]="true"
+            styleClass="p-fluid">
+
+            <ng-template pTemplate="content">
+                <div class="field">
+                    <label for="name">Cantidad</label><br>
+                    <input type="number" pInputText [(ngModel)]="egreso.cantidad" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !egreso.cantidad">es requerida!</small>
+                </div>
+                <div class="field">
+                    <label for="name">Descripcion</label><br>
+                    <input type="text" pInputText [(ngModel)]="egreso.descripcion" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !egreso.descripcion">es requerida!</small>
+                </div>
+
+                <div class="field col">
+                    <label for="asociado">Tipo de egreso</label>
+                    <p-dropdown [options]="tipoEgresos" [(ngModel)]="egreso.tipoEgreso"
+                        optionLabel="nombre"></p-dropdown>
+                </div>
+                <div class="col mb-3">
+                    <label for="formFile">Seleccione una Image</label>
+                    <input class="form-control" type="file" id="formFile" (change)="seleccionarImagen($event)"
+                        accept="image/*" />
+                </div>
+                <div class="field ">
+                    <label for="name">Fecha de pago </label><br>
+                    <p-calendar [(ngModel)]="date" [showIcon]="true"></p-calendar>
+                    <small class="p-error" *ngIf="submitted && !egreso.fechaPago">es requerida!</small>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
+                    *ngIf="!egreso.id else elseBlock" (click)="create()"></button>
+                <ng-template #elseBlock>
+                    <button pButton pRipple label="Actualizar" icon="pi pi-check" class="p-button-text"
+                        (click)="update()"></button>
+                </ng-template>
+            </ng-template>
+
+        </p-dialog>
+
+        <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+    </div>
+</div>

@@ -27,6 +27,7 @@
                         <th pSortableColumn="nombre" style="min-width:1rem">Cargo</th>
                         <th pSortableColumn="responsabilidad" style="max-width:2rem">Responsabilidad</th>
                         <th pSortableColumn="" style="min-width:5rem"></th>
+                        
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-cargo>
@@ -45,6 +46,7 @@
                 </ng-template>
             </p-table>
         </div>
+        
         <p-dialog [(visible)]="carDialog" [style]="{ width: '450px' }" header="{{title}}" [modal]="true"
             styleClass="p-fluid">
             <ng-template pTemplate="content">

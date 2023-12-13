@@ -26,20 +26,20 @@ export class CargosComponent implements OnInit {
   cargos!: Cargo[];
   cargo!: Cargo;
   carDialog: boolean = false;
-  title: string="";
+  title: string = "";
 
   submitted: boolean = false;
 
-  statuses!:any[];
-  indexSelect:number =-1;
+  statuses!: any[];
+  indexSelect: number = -1;
 
   selectedCargos!: Cargo[] | null;
 
   constructor(
-    private messageService:MessageService,
-    private confirmationService:ConfirmationService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
     private cargoService: CargoService
-  ){}
+  ) { }
 
   ngOnInit(): void {
     this.cargoService.getAll().subscribe(
@@ -54,12 +54,12 @@ export class CargosComponent implements OnInit {
     this.cargo = {};
     this.submitted = false;
     this.carDialog = true;
-    this.title ="Agregar Cargo";
+    this.title = "Agregar Cargo";
   }
   editCargo(cargo: Cargo) {
     this.cargo = { ...cargo };
     this.carDialog = true;
-    this.title ="Actualizar ";
+    this.title = "Actualizar ";
     this.indexSelect = this.cargos.indexOf(cargo);
 
   }
@@ -70,27 +70,27 @@ export class CargosComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.cargoService.delete(cargo.id).subscribe({
-          next: (response)=>{
+          next: (response) => {
             this.cargos = this.cargos.filter((val) => val.id !== cargo.id);
             this.cargo = {};
             this.messageService.add({ severity: 'success', summary: 'Resultado', detail: `${response.message}`, life: 3000 });
-      
+
           },
-          error: (err)=>{
-            this.messageService.add({ severity: 'error', summary: 'Resultado', detail: `${err.message}`, life: 1000 });
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Resultado2', detail: `${err.error.message}`, life: 1000 });
           }
         })
-        },
+      },
     });
   }
-  getEventValue($event:any):string{
+  getEventValue($event: any): string {
     return $event.target.value;
   }
   hideDialog() {
     this.carDialog = false;
     this.submitted = false;
   }
-  create():void{
+  create(): void {
     if (!this.cargo.nombre || !this.cargo.responsabilidad) {
       this.messageService.add({
         severity: 'error',
@@ -100,47 +100,44 @@ export class CargosComponent implements OnInit {
       });
       return; // Evitar la ejecución adicional si nombre está vacío
     }
+
+    // Validar que el nombre y lugar de nacimiento tengan al menos 10 caracteres
+    const nombreValido = /^[A-Za-zÁáÉéÍíÓóÚúÜüÑñ\s,]+$/u.test(this.cargo.responsabilidad);
+
+    if (!nombreValido) {
+      // Muestra un mensaje de error si los campos no cumplen con los requisitos
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Los dastos ingresados no son correctos. ',
+        life: 3000
+      });
+      return; // Salir de la función sin continuar
+    }
     this.submitted = true;
     this.cargoService.save(this.cargo).subscribe({
       next: (json) => {
-        this.cargos.unshift(json.cargo);
+        this.cargos.unshift(json.Cargo);
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 3000 });
       },
       error: (err) => {
-        if(err.status ==409)
-        {
-          this.messageService.add({ severity: 'error', 
-          summary: 'Resultado', detail: `${err.error.message}`, life: 3000 });
+        if (err.status == 409) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Resultado1', detail: `${err.error.message}`, life: 3000
+          });
         }
-        else
-        {
-          this.messageService.add({ severity: 'error', 
-          summary: 'Resultado', detail:'No se puede registrar campos vacios', life: 3000 });
+        else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Resultado',  detail: `${err.error}`, life: 3000
+          });
         }
 
       }
     });
     this.carDialog = false;
   }
-  // update(): void{
-  //   this.submitted = true;
-  //   let id = this.cargo.id;
-  //   this.cargoService.update(this.cargo, id).subscribe(
-  //     {
-  //       next: (json) =>{
-  //         Object.assign(this.cargos[this.indexSelect], json.cargo);
-  //         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 1000 });
-  //       },
-  //       error: (err) =>{
-  //         this.messageService.add({ severity: 'error', summary: 'Resultado', detail:'No se puede registrar campos vacios' , life: 1000 }); //`${err.message}`
-  //         console.log('code status: ' + err.status);
-  //         console.log(err.message);
-  //       }
-  //     }
-  //   );
-  //   this.carDialog = false;
-  //   this.cargo = {};
-  // }
   update(): void {
     this.submitted = true;
     if (!this.cargo.nombre) {
@@ -152,7 +149,7 @@ export class CargosComponent implements OnInit {
       });
       return; // Evitar la ejecución adicional si nombre está vacío
     }
-  
+
     let id = this.cargo.id;
     this.cargoService.update(this.cargo, id).subscribe(
       {
@@ -180,7 +177,7 @@ export class CargosComponent implements OnInit {
     this.carDialog = false;
     this.cargo = {};
   }
-  
-  
+
+
 
 }

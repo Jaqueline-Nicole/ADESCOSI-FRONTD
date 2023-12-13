@@ -5,6 +5,11 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ActividadPrincipal } from '../actividad-principales/actividad-principal';
 import { ActividadPrincipalService } from '../actividad-principales/actividad-principal.service';
 import { DatePipe } from '@angular/common';
+import { MiembroService } from '../miembros/miembro.service';
+import { TipoActividadService } from '../tipo-actividades/tipo-actividad.service';
+import { Miembro } from '../miembros/miembro';
+import { TipoActividad } from '../tipo-actividades/tipo-actividad';
+import { AuthService } from '../usuarios/auth.service';
 
 @Component({
   selector: 'app-fiesta-patronales',
@@ -43,7 +48,12 @@ export class FiestaPatronalesComponent implements OnInit {
     private fiestaPatronalService: FiestaPatronalService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+
+    private actividadService: ActividadPrincipalService,
+    private miembroService: MiembroService,
+    private tipoService: TipoActividadService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -51,7 +61,7 @@ export class FiestaPatronalesComponent implements OnInit {
     this.rows = 5; // Establece el número de filas por página
     this.first = 0; // Inicializa el índice del primer registro en la página actual
 
-
+    this.getTipo();
   }
 
   getAll(): void {
@@ -63,11 +73,13 @@ export class FiestaPatronalesComponent implements OnInit {
   verActividades(fiesta: FiestaPatronal): void {
     this.submitted = false;
     this.displayDialog = true;
-    this.title = 'Agregar egreso';
+    this.title = 'Agregar';
     this.fiestaSeleccionada = fiesta; // Establece la fiesta seleccionada
     this.fiestaPatronalService.getActividades(fiesta.id).subscribe(actividades => {
       this.actividades = actividades; // Almacena las actividades en la propiedad actividades
     });
+    console.log(this.fiestaSeleccionada)
+
   }
 
   gellAll(): void {
@@ -79,14 +91,17 @@ export class FiestaPatronalesComponent implements OnInit {
   }
 
 
-  seleccionarFiesta(fiesta: FiestaPatronal): void {
-    this.fiestaSeleccionada = fiesta;
-    // Reinicia la lista de actividades al seleccionar una nueva fiesta
-    this.actividades = [];
-  }
+  // seleccionarFiesta(fiesta: FiestaPatronal): void {
+  //   this.fiestaSeleccionada = fiesta;
+  //   console.log(this.fiestaSeleccionada)
+
+  //   // Reinicia la lista de actividades al seleccionar una nueva fiesta
+  //   this.actividades = [];
+  // }
 
   hideDialog() {
     this.displayDialog = false;
+    // this.priDialong = false;
     this.submitted = false;
     this.fiestaDialog = false;
   }
@@ -128,12 +143,25 @@ export class FiestaPatronalesComponent implements OnInit {
     return Math.floor(value);
   }
 
-
-
   getEventValue($event: any): string {
     return $event.target.value;
   }
+
   create(): void {
+
+    if (this.date && this.date1 && this.date > this.date1) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Las fechas no estan correctas',
+        life: 3000
+      });
+      return;
+    }
+
+    this.fiestaPatronal.fechaInicio = this.date;
+    this.fiestaPatronal.fechaFin = this.date1;
+    this.submitted = true;
     if (!this.fiestaPatronal.descripcion || !this.fiestaPatronal.fechaInicio) {
       this.messageService.add({
         severity: 'error',
@@ -143,9 +171,7 @@ export class FiestaPatronalesComponent implements OnInit {
       });
       return; // Evitar la ejecución adicional si nombre está vacío
     }
-    this.fiestaPatronal.fechaInicio = this.date;
-    this.fiestaPatronal.fechaFin = this.date1;
-    this.submitted = true;
+    
     this.fiestaPatronalService.save(this.fiestaPatronal).subscribe({
       next: (json) => {
         this.fiestasPatronales.unshift(json.fiestaPatronal);
@@ -194,11 +220,14 @@ export class FiestaPatronalesComponent implements OnInit {
 
   update(): void {
     this.submitted = true;
+    this.fiestaPatronal.fechaInicio = this.date;
+    this.fiestaPatronal.fechaFin = this.date1;
+
     if (!this.fiestaPatronal.descripcion) {
       this.messageService.add({
         severity: 'error',
         summary: 'Resultado',
-        detail: 'El campo puede estar vacío',
+        detail: 'El campo  no puede estar vacío',
         life: 1000
       });
       return; // Evitar la ejecución adicional si nombre está vacío
@@ -231,4 +260,129 @@ export class FiestaPatronalesComponent implements OnInit {
     this.fiestaDialog = false;
     this.fiestaPatronal = {};
   }
+
+  // apartado para agregar una actividad
+
+  private imagen: File;
+  actividadPrincipales!: ActividadPrincipal[];
+  //miembro: Miembro = { id: 9 }
+  miembro: Miembro = this.authService.miembro; 
+
+  
+  miembros!: Miembro[];
+  tipoActs!: TipoActividad[];
+  actividadPrincipal!: ActividadPrincipal;
+  priDialong: boolean = false;
+
+  getAllAct(): void {
+    this.actividadService.getAll().subscribe(
+      response => {
+        this.actividadPrincipales = response as ActividadPrincipal[];
+        console.log(response);
+      }
+    );
+  }
+
+  getMiembros(): void {
+    this.miembroService.getAll().subscribe((response) => {
+      this.miembros = response as Miembro[];
+    });
+  }
+
+  getTipo(): void {
+    this.tipoService.getAll().subscribe((response) => {
+      this.tipoActs = response as TipoActividad[];
+    })
+  }
+
+  openNewA(fiesta: FiestaPatronal) {
+    this.actividadPrincipal = {};
+    this.actividadPrincipal.fiesta = fiesta; // Asigna la fiesta seleccionada a la actividadPrincipal
+    this.submitted = false;
+    this.priDialong = true;
+    this.title = 'Agregar';
+    this.fiestaSeleccionada = fiesta;
+    this.fiestaPatronalService.getActividades(fiesta.id).subscribe(actividades => {
+      this.actividades = actividades;
+    });
+    console.log(this.fiestaSeleccionada);
+  }
+  
+  createFormData(): FormData {
+    let formData = new FormData();
+    if (this.imagen == null) {
+      if (this.actividadPrincipal.id == null) {
+        this.actividadPrincipal.imagen = null;
+        formData.append("imagen", null)
+      }
+    } else {
+      formData.append("imagen", this.imagen);
+    }
+    formData.append("actividadPrincipal",
+      new Blob([JSON.stringify(this.actividadPrincipal)], { type: "application/json" }));
+    return formData;
+  }
+  seleccionarImagen(event) {
+    this.imagen = event.target.files[0];
+    console.log(this.imagen);
+  }
+
+  // createA( ): void {
+  //   this.submitted = true;
+  //   let fiesta:FiestaPatronal;
+  //   this.actividadPrincipal.fechaRealizada = this.date;
+  //   this.fiestaSeleccionada = fiesta; // Establece la fiesta seleccionada
+  //   this.fiestaPatronalService.getActividades(fiesta.id).subscribe(actividades => {
+  //     this.actividades = actividades; // Almacena las actividades en la propiedad actividades
+  //   });
+  //   this.actividadPrincipal.miembro = this.miembro;
+  //   this.actividadService.save(this.createFormData() as ActividadPrincipal).subscribe({
+  //     next: (json) => {
+  //       this.actividadPrincipales.unshift(json.actividadPrincipal)
+  //       this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 3000 });
+  //     },
+  //     error: (err) => {
+  //       if (err.status == 409) {
+  //         this.messageService.add({
+  //           severity: 'error',
+  //           summary: 'Resultado', detail: `${err.error.message}`, life: 3000
+  //         });
+  //       }
+  //       else {
+  //         this.messageService.add({
+  //           severity: 'error',
+  //           summary: 'Resultado', detail: `${err.error.message}`, life: 3000
+  //         });
+  //       }
+  //     }
+  //   });
+  //   this.priDialong = false;
+  // }
+  createA():void {
+    this.actividadPrincipal.fiesta = this.fiestaSeleccionada;
+    this.actividadPrincipal.fechaRealizada = this.date;
+    this.actividadPrincipal.miembro = this.miembro;
+    this.actividadService.save(this.createFormData() as ActividadPrincipal).subscribe({
+      next: (json) => {
+        // this.actividadPrincipales.unshift(json.actividadPrincipal)
+        this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 3000 });
+      },
+      error: (err) => {
+        if (err.status == 409) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Resultado', detail: `${err.error.message}`, life: 3000
+          });
+        }
+        else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Resultado', detail: `${err.error.message}`, life: 3000
+          });
+        }
+      }
+    });
+    this.priDialong = false;
+  }
+
 }

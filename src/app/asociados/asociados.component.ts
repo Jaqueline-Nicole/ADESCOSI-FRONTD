@@ -42,6 +42,8 @@ export class AsociadosComponent implements OnInit {
   checked!: string;
 
 
+  optionRadioButton: string = "activos"
+  
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -166,7 +168,7 @@ export class AsociadosComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Resultado2',
-              detail: `${err.error.message}`,
+              detail: `${err.error}`,
               life: 3000
             });
           }
@@ -306,6 +308,42 @@ export class AsociadosComponent implements OnInit {
     if (event) {
       this.getActivos()
     }
+  }
+
+  letraFiltro: string = '';
+
+  generatePDF() {
+    this.asociadoService.getAllActivos().subscribe(asociados => {
+      const encabezado = ['Nombre', 'Lugar Nacimiento', 'Fecha Nacimiento', 'Estado Civil', 'Estado'];
+      
+      // Filtrar los asociados que empiecen con la letra ingresada
+      const asociadosFiltrados = asociados.filter(asociado => asociado.nombre.toLowerCase().startsWith(this.letraFiltro.toLowerCase()));
+      
+      const cuerpo = asociadosFiltrados.map(asociado => [
+        asociado.nombre,
+        asociado.lugarNacimiento,
+        this.formatDate(asociado.fechaNacimiento),
+        asociado.estadoCivil == 'C' ? 'Casado/a':(asociado.estadoCivil == 'S' ?
+        'Soltero/a':(asociado.estadoCivil == 'D' ? 'Divorciado/a':'Viudo/a')) ,
+        asociado.estado
+      ]);
+  
+      const titulo = 'Lista de Asociados';
+      const confirmarDescarga = window.confirm('¿Desea descargar el PDF?');
+      
+      if (confirmarDescarga) {
+        this.asociadoService.imprimir(encabezado, cuerpo, titulo, true);
+      }
+    });
+  }
+  
+  formatDate(date: Date) {
+    // Convierte la fecha en formato ISO a formato 'dd/MM/yyyy'
+    const fecha = new Date(date);
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Sumamos 1 porque los meses comienzan en 0 (enero).
+    const anio = fecha.getFullYear();
+    return `${dia}/${mes}/${anio}`;
   }
 
 

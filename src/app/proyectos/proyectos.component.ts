@@ -5,6 +5,7 @@ import { MiembroService } from '../miembros/miembro.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ProyectoService } from './proyecto.service';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../usuarios/auth.service';
 
 @Component({
   selector: 'app-proyectos',
@@ -31,17 +32,21 @@ export class ProyectosComponent implements OnInit {
   selectedProyectos!: Proyecto[] | null;
   private imagen: File;
 
-  miembro: Miembro = { id: 9 }
+  miembro: Miembro = this.authService.miembro
   date: Date | undefined;
   date1: Date | undefined;
 
+
+  optionRadioButton: string = "activos"
 
   constructor(
     private miembroService: MiembroService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private proyectoService: ProyectoService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private authService: AuthService
+
 
   ) { }
 
@@ -87,7 +92,7 @@ export class ProyectosComponent implements OnInit {
     const formattedDate = this.datePipe.transform(date, format, locale)
 
     const date1 = new Date(proyecto.fechaFinalizacion)
-    date1.setTime(date.getTime() + date1.getTimezoneOffset() * 60 * 4 * 1000)
+    date1.setTime(date1.getTime() + date1.getTimezoneOffset() * 60 * 4 * 1000)
     const formattedDate1 = this.datePipe.transform(date1, format, locale)
 
     this.date = new Date(formattedDate)
@@ -132,9 +137,9 @@ export class ProyectosComponent implements OnInit {
       next: (json) => {
         this.proyectos.unshift(json.Proyecto)
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 3000 });
-        setTimeout(() => {
-          window.location.reload();
-        }, 300)
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 300)
       },
       error: (err) => {
         if (err.status == 409) {

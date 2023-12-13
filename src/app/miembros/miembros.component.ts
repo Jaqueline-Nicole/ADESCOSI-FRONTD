@@ -111,6 +111,8 @@ export class MiembrosComponent implements OnInit {
 
   createFormData(): FormData {
     let formData = new FormData();
+    formData.append("request",
+      new Blob([JSON.stringify(this.miembro)], { type: "application/json" }));
     if (this.imagen == null) {
       if (this.miembro.id == null) {
         this.miembro.imagen = null;
@@ -119,8 +121,7 @@ export class MiembrosComponent implements OnInit {
     } else {
       formData.append("imagen", this.imagen);
     }
-    formData.append("miembro",
-      new Blob([JSON.stringify(this.miembro)], { type: "application/json" }));
+    
     return formData;
   }
 
@@ -128,18 +129,18 @@ export class MiembrosComponent implements OnInit {
     this.submitted = true;
     this.miembroService.save(this.createFormData() as Miembro).subscribe({
       next: (json) => {
-        this.miembros.unshift(json.Miembro); this.messageService.add({
-          severity: 'success', summary: 'Confirmado', detail: `${json.messsage}`, life: 3000
+        this.miembros.unshift(json.miembro); this.messageService.add({
+          severity: 'success', summary: 'Confirmado', detail: `Miembro registrado`, life: 3000
         });
       },
       error:(err)=>{
         if(err.status == 409){
           this.messageService.add({
-          severity: 'error', summary: 'Resultado1', detail: `${err.messsage}`, life: 3000
+          severity: 'error', summary: 'Resultado', detail: `${err.error.message}`, life: 3000
           });
         }else{
           this.messageService.add({
-          severity: 'error', summary: 'Resultado2', detail: `${err.messsage}`, life: 3000
+          severity: 'error', summary: 'Resultado2', detail: `${err.message}`, life: 3000
           });
         }
       }
@@ -177,16 +178,21 @@ export class MiembrosComponent implements OnInit {
 
   deleteMiembro(estado: string, miembro:Miembro){
     this.confirmationService.confirm({
-      message:'' + miembro.asociado.nombre + '?',
-      header:'Confirma',
+      message: `Estas seguro de cambiar a ${miembro.estado === 'A' ? 'inactivo' : 'activo'} el asociado ${miembro.asociado.nombre} ?`,
+      header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.miembroService.changeState(estado, miembro).subscribe({
+        const nuevoEstado = miembro.estado === "A" ? "I" : "A"
+        this.miembroService.changeState(nuevoEstado, miembro).subscribe({
           next: (response) => {
-            this.miembros = this.miembros.filter((val) => val.id !== miembro.id);
+            //this.miembros = this.miembros.filter((val) => val.id !== miembro.id);
+            miembro.estado = nuevoEstado;
             this.miembro = {};
             this.messageService.add({ severity: 'success', summary: 'Resultado', detail: `${response.message}`, life: 3000 });
 
+            setTimeout(() => {
+              window.location.reload();
+            }, 500)
           },
           error: (err) => {
             this.messageService.add({ severity: 'error', summary: 'Resultado', detail: `${err.message}`, life: 1000 });

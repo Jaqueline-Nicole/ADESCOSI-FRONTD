@@ -40,7 +40,7 @@ export const navbarData: INavbarData[] = [
                 label: 'Fiesta Patronal'
             },
             {
-                routeLink: '',
+                routeLink: 'principales',
                 icon: 'event_available',
                 label: 'Principales '
             },
@@ -103,6 +103,7 @@ export const navbarData: INavbarData[] = [
             },
         ]
     }
+    
 
 ]
 

@@ -6,6 +6,7 @@ import { MiembroService } from '../miembros/miembro.service';
 import { ProyectoService } from '../proyectos/proyecto.service';
 import { MobiliarioService } from './mobiliario.service';
 import { Mobiliario } from './mobiliario';
+import { AuthService } from '../usuarios/auth.service';
 
 @Component({
   selector: 'app-mobiliarios',
@@ -27,19 +28,24 @@ export class MobiliariosComponent implements OnInit {
   selectedMobiliario!: Mobiliario[] | null;
   miembros!: Miembro[];
 
-  miembro: Miembro = { id: 9 }
+  //= { id: 9 } 
+  miembro: Miembro = this.authService.miembro;
 
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private miembroService: MiembroService,
-    private mobiliarioService: MobiliarioService
-    ){
-    
+    private mobiliarioService: MobiliarioService,
+    public authService: AuthService
+  ) {
+
   }
 
   ngOnInit(): void {
     this.getAll();
+    //this.mobiliario.miembro = JSON.parse(JSON.stringify( this.miembro));
+    
+
   }
 
   getAll(): void {
@@ -57,6 +63,8 @@ export class MobiliariosComponent implements OnInit {
   getMiembros(): void {
     this.miembroService.getAll().subscribe((response) => {
       this.miembros = response as Miembro[];
+      console.log(this.miembros);
+
     });
   }
   editMobil(mobiliario: Mobiliario) {
@@ -64,15 +72,22 @@ export class MobiliariosComponent implements OnInit {
     this.mobDialog = true;
     this.title = "Actualizar ";
     this.indexSelect = this.mobiliarios.indexOf(mobiliario);
+    console.log(this.miembro);
+
   }
   getEventValue($event: any): string {
     return $event.target.value;
+
   }
   hideDialog() {
     this.mobDialog = false;
     this.submitted = false;
+    console.log(this.miembro);
+
   }
-  create():void{
+  create(): void {
+    console.log(this.miembro);
+
     if (!this.mobiliario.exitenciaInicial && !this.mobiliario.disponible) {
       this.messageService.add({
         severity: 'error',
@@ -82,7 +97,7 @@ export class MobiliariosComponent implements OnInit {
       });
       return; // Evitar la ejecución adicional si nombre está vacío
     }
-    this.mobiliario.miembro = this.miembro;
+    this.mobiliario.miembro = JSON.parse(JSON.stringify(this.miembro));
     this.submitted = true;
     this.mobiliarioService.save(this.mobiliario).subscribe({
       next: (json) => {
@@ -90,15 +105,17 @@ export class MobiliariosComponent implements OnInit {
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 3000 });
       },
       error: (err) => {
-        if(err.status ==409)
-        {
-          this.messageService.add({ severity: 'error', 
-          summary: 'Resultado', detail: `${err.error.message}`, life: 3000 });
+        if (err.status == 409) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Resultado', detail: `${err.error.message}`, life: 3000
+          });
         }
-        else
-        {
-          this.messageService.add({ severity: 'error', 
-          summary: 'Resultado', detail:'No se puede registrar campos vacios', life: 3000 });
+        else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Resultado', detail: 'No se puede registrar campos vacios', life: 3000
+          });
         }
 
       }
@@ -106,17 +123,17 @@ export class MobiliariosComponent implements OnInit {
     this.mobDialog = false;
   }
 
-  update(): void{
+  update(): void {
     this.submitted = true;
     let id = this.mobiliario.id;
-    this.mobiliarioService.update( this.mobiliario, id  ).subscribe(
+    this.mobiliarioService.update(this.mobiliario, id).subscribe(
       {
-        next: (json) =>{
+        next: (json) => {
           Object.assign(this.mobiliarios[this.indexSelect], json.mobiliario);
           this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 1000 });
         },
-        error: (err) =>{
-          this.messageService.add({ severity: 'error', summary: 'Resultado', detail:'No se puede registrar campos vacios' , life: 1000 }); //`${err.message}`
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Resultado', detail: 'No se puede registrar campos vacios', life: 1000 }); //`${err.message}`
           console.log('code status: ' + err.status);
           console.log(err.message);
         }

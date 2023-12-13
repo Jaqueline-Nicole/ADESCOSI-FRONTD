@@ -7,6 +7,8 @@ import { Miembro } from '../miembros/miembro';
 import { DatePipe } from '@angular/common';
 import { TipoIngresosService } from '../tipo-ingresos/tipo-ingresos.service';
 import { TipoIngreso } from '../tipo-ingresos/tipo-ingreso';
+import { AuthService } from '../usuarios/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-ingresos',
@@ -30,13 +32,14 @@ export class IngresosComponent implements OnInit {
   selectedIngresos!: Ingreso[] | null;
   private imagen: File;
 
-  miembro: Miembro = { id: 9 }
+  miembro: Miembro = this.authService.miembro;
   constructor(
     private miembroService: MiembroService,
     private tipoService: TipoIngresosService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private ingresoService: IngresoService,
+    private authService: AuthService
 
   ) { }
 
@@ -105,9 +108,9 @@ export class IngresosComponent implements OnInit {
     this.submitted = true;
     this.ingreso.miembro = this.miembro;
     this.ingresoService.save(this.createFormData() as Ingreso).subscribe({
-      
+
       next: (json) => {
-        this.ingresos.unshift(json.Ingreso)
+        this.ingresos.unshift(json.ingreso)
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 3000 });
       },
       error: (err) => {
@@ -150,4 +153,123 @@ export class IngresosComponent implements OnInit {
     this.imagen = event.target.files[0];
     console.log(this.imagen);
   }
+
+  onImprimir() {
+    alert("Imprimir")
+    this.ingresoService.getAll().subscribe(
+      response => {
+        const cuerpo = Object(response)['datos'].map(
+          (obj: any) => {
+            const datos = [
+              obj.id,
+              obj.imagen,
+              obj.tipoIngreso
+            ]
+            return datos;
+          }
+        )
+        console.log(cuerpo)
+        // this.categorias = Object(response)['datos'];
+      }
+    );
+
+  }
+  // generatePDF() {
+  //   this.ingresoService.getAll().subscribe(ingresos => {
+  //     const encabezado = ['Cantidad', 'Descripción', 'Fecha', 'Miembro',];
+  //     const cuerpo = ingresos.map(ingreso => [
+  //       ingreso.cantidad,
+  //       ingreso.descripcion,
+  //       this.formatDate(ingreso.fechaIngreso),
+  //       ingreso.miembro.asociado.nombre,
+  //     ]);
+  //     const titulo = 'Lista de Ingresos';
+  //     const confirmarDescarga = window.confirm('¿Desea descargar el PDF?');
+
+  //     if (confirmarDescarga) {
+  //       this.ingresoService.imprimir(encabezado, cuerpo, titulo, true);
+  //     }
+  //   });
+  // }
+  generatePDF() {
+    if (this.ingresosEncontrados.length > 0) {
+      const encabezado = ['Cantidad', 'Descripción', 'Fecha', 'Registrado por'];
+      const cuerpo = this.ingresosEncontrados.map(ingreso => [
+        ingreso.cantidad,
+        ingreso.descripcion,
+        this.formatDate(ingreso.fechaIngreso),
+        ingreso.miembro.asociado.nombre,
+      ]);
+      const titulo = 'Lista de Ingresos';
+      const confirmarDescarga = window.confirm('¿Desea descargar el PDF?');
+
+      if (confirmarDescarga) {
+        this.ingresoService.imprimir(encabezado, cuerpo, titulo, true);
+      }
+    } else {
+      console.error('No se encontraron ingresos para generar el PDF.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se encontraron ingresos para generar el PDF.',
+      });
+
+    }
+  }
+
+
+  formatDate(date: Date) {
+    // Convierte la fecha en formato ISO a formato 'dd/MM/yyyy'
+    const fecha = new Date(date);
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Sumamos 1 porque los meses comienzan en 0 (enero).
+    const anio = fecha.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+  }
+
+  ingresosEncontrados: Ingreso[] = [];
+  fechaInicio: string = '';
+  fechaFin: string = '';
+
+  buscarIngresosPorFecha() {
+    if (this.fechaInicio && this.fechaFin) {
+      this.ingresoService.buscarIngresosPorFecha(this.fechaInicio, this.fechaFin).subscribe(
+        ingresos => {
+          // console.log('Ingresos encontrados:', ingresos);
+          this.ingresosEncontrados = ingresos; // Asignar los ingresos encontrados a la variable del componente
+          this.generatePDF(); // Llama a la función generatePDF después de encontrar los ingresos
+        },
+        error => {
+          console.error('Error al buscar ingresos por fecha:', error);
+        }
+      );
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Ambas fechas son requeridas para la búsqueda',
+      });
+    }
+  }
+
+  //   buscarIngresosPorFecha() {
+  //   if (this.fechaInicio && this.fechaFin) {
+  //     this.ingresoService.buscarIngresosPorFecha(this.fechaInicio, this.fechaFin).subscribe(
+  //       ingresos => {
+  //         console.log('Ingresos encontrados:', ingresos);
+  //         this.ingresosEncontrados = ingresos; // Asignar los ingresos encontrados a la variable del componente
+  //       },
+  //       error => {
+  //         console.error('Error al buscar ingresos por fecha:', error);
+  //       }
+  //     );
+  //   } else {
+  //     console.error('Ambas fechas son requeridas para la búsqueda');
+  //   }
+  // }
+
+
+
 }
+
+

@@ -1,5 +1,4 @@
-<div class="sidenav" [ngClass]="collapsed ? 'sidenav-collapsed':'' " 
->
+<div class="sidenav" [ngClass]="collapsed ? 'sidenav-collapsed':'' ">
     <div class="logo-container">
         <button class="logo" (click)="toggleCollapse()">A</button>
         <div class="logo-text" @fadeInOut *ngIf="collapsed">
@@ -8,12 +7,18 @@
         <button icon="close" class="btn-close" @rotate *ngIf="collapsed" (click)="closeSidenav()" style="color: white;">
         </button>
     </div>
+    
+    <div *ngIf="authService.isAuthenticated()">
+        <label for=""><b>Usuario: </b> {{authService.miembro.username}}</label>
+    </div>
+
     <div class="scrollwrap scrollwrap_delayed">
         <ul class="sidenav-nav">
             <!-- cargos -->
             <li class="sidenav-nav-item" *ngFor="let data of navData ">
                 <a class="sidenav-nav-link" (click)="handleClick(data)" *ngIf="data.items && data.items.length > 0">
                     <mat-icon class="sidenav-link-icon" fontIcon="{{data.icon}}" (click)="toggleCollapse()"></mat-icon>
+
                     <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
                         {{ data.label}}
                     </span>
@@ -26,10 +31,18 @@
                     <mat-icon class="sidenav-link-icon" fontIcon="{{data.icon}}" (click)="toggleCollapse()"></mat-icon>
                     <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">{{ data.label}}</span>
                 </a>
-                <div *ngIf="collapsed && data.items && data.items.length > 0" >
+
+                <div *ngIf="collapsed && data.items && data.items.length > 0">
                     <app-sublevel-menu [data]="data" [collapsed]="collapsed" [multiple]="multiple"
                         [expanded]="data.expanded"></app-sublevel-menu>
                 </div>
+
+            </li>
+            <li class="sidenav-nav-item" *ngIf="authService.isAuthenticated()" >
+                <a class="sidenav-nav-link"  (click)="logout()">
+                    <mat-icon class="sidenav-link-icon">exit_to_app</mat-icon>
+                    <span class="sidenav-link-text">Cerrar sección</span>
+                </a>
             </li>
         </ul>
 

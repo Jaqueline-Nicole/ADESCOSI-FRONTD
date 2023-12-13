@@ -7,6 +7,10 @@ export class Miembro{
     estado?:string;
     imagen?:string;
     asociado?:Asociado;
+    nom?:Asociado;
     cargo?:Cargo;
     periodo?:Periodo;
+    username?:string;
+    password?:string;
+    role?:string;
 }

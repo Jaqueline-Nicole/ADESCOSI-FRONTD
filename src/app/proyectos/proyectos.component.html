@@ -22,12 +22,12 @@
                 <ng-template pTemplate="right">
                     <div class="flex flex-wrap gap-3">
                         <div class="flex align-items-center">
-                            <p-radioButton name="activo" value="a" [(ngModel)]="ingredient" inputId="ingredient"
+                            <p-radioButton name="activo" value="activos" [(ngModel)]="optionRadioButton"  inputId="ingredient"
                                 (ngModelChange)="checkChanged1($event)"></p-radioButton>
                             <label for="ingredient2" class="ml-2">Pediente</label>
                         </div>
                         <div class="flex align-items-center">
-                            <p-radioButton name="inactivo" value="Cheese" [(ngModel)]="ingredient  "
+                            <p-radioButton name="inactivo" value="a" [(ngModel)]="optionRadioButton"
                                 inputId="ingredient1" (ngModelChange)="checkChanged($event)"></p-radioButton>
                             <label for="ingredient1" class="ml-2">Finalizado</label>
                         </div>

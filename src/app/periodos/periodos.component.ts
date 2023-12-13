@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { PeriodoService } from './periodo.service';
 import { Periodo } from './periodo';
+import { AuthService } from '../usuarios/auth.service';
 
 @Component({
   selector: 'app-periodos',

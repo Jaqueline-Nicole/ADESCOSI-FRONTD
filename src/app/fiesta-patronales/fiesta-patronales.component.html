@@ -24,6 +24,7 @@
                     <th style="min-width:6rem">Fecha de inicio</th>
                     <th style="min-width:6rem">Fecha de fin</th>
                     <th style="min-width:6rem">Actividades</th>
+
                 </tr>
                 <ng-container *ngFor="let fiesta of fiestasPatronales | slice:first:first + rows">
                     <tr class="hola">
@@ -34,13 +35,15 @@
                             <button pButton type="button" icon="pi pi-list" (click)="verActividades(fiesta)"
                                 class="p-button-success p-button-rounded mr-3" style="color: black;">
                             </button>
-                            <button pButton pRipple icon="fas fa-trash" class="p-button-rounded p-button-danger mr-3"
-                                style="color: black;" (click)="deleteFiesta(fiestaPatronal)">
-                            </button>
                             <button pButton pRipple icon="bi bi-pencil-square"
-                                class="p-button-rounded p-button-icon " style="color: black;"
+                                class="p-button-rounded p-button-icon mr-3" style="color: black;"
                                 (click)="editIng(fiesta)">
                             </button>
+                            <button pButton pRipple icon="bi bi-pencil"
+                            class="p-button-warning p-button-rounded p-button-icon mr-3" style="color: black;"
+                            (click)="openNewA(fiesta)">
+                        </button>
+
 
                         </td>
                     </tr>
@@ -126,6 +129,47 @@
             </ng-template>
         </p-dialog>
 
+        <!-- actividades  -->
+      
+        <p-dialog [(visible)]="priDialong" [style]="{ width: '550px' }" header="{{title}}" [modal]="true"
+            styleClass="p-fluid">
+
+            <ng-template pTemplate="content">
+                <div class="field">
+                    <label for="name">Descripcion</label><br>
+                    <input type="text" pInputText [(ngModel)]="actividadPrincipal.descripcion" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !actividadPrincipal.descripcion">es requerida!</small>
+                </div>
+
+                <div class="field col">
+                    <label for="asociado">Tipo actividad</label>
+                    <p-dropdown [options]="tipoActs" [(ngModel)]="actividadPrincipal.tipo"
+                        optionLabel="nombre"></p-dropdown>
+                </div>
+                <div class="col mb-3">
+                    <label for="formFile">Seleccione una Image</label>
+                    <input class="form-control" type="file" id="formFile" (change)="seleccionarImagen($event)"
+                        accept="image/*" />
+                </div>
+                <div class="field">
+                    <label class="mb-1"><b>Fecha de realizacion:</b> (mes/dia/año)</label>
+                    <p-calendar [showIcon]="true" [(ngModel)]="date"></p-calendar>
+                    <small class="p-error" *ngIf="submitted && !actividadPrincipal.fechaRealizada">La fecha es requerida
+                        y no puede ser menor de 18 años</small>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
+                    *ngIf="!actividadPrincipal.id else elseBlock" (click)="createA()"></button>
+                <ng-template #elseBlock>
+                    <button pButton pRipple label="Actualizar" icon="pi pi-check" class="p-button-text"
+                        (click)="update()"></button>
+                </ng-template>
+            </ng-template>
+
+        </p-dialog>
     </div>
 
 </div>

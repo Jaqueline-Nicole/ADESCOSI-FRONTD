@@ -21,7 +21,7 @@
                 <ng-template pTemplate="right">
                     <div class="flex flex-wrap gap-3">
                         <div class="flex align-items-center">
-                            <p-radioButton name="activo" value="a" [(ngModel)]="ingredient" inputId="ingredient"
+                            <p-radioButton name="activo" value="activos" [(ngModel)]="ingredient" inputId="ingredient"
                                 (ngModelChange)="checkChanged1($event)"></p-radioButton>
                             <label for="ingredient2" class="ml-2">Activo</label>
                         </div>
@@ -43,26 +43,27 @@
 
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="estado" style="min-width:6rem">Estado</th>
-                        <th pSortableColumn="image" style="min-width:3rem">Imagen</th>
-                        <th pSortableColumn="cargo.nombre" style="min-width:6rem">Cargo</th>
                         <th pSortableColumn="asociado.nombre" style="min-width:6rem">Asociado</th>
+                        <th pSortableColumn="cargo.nombre" style="min-width:6rem">Cargo</th>
+                        <th pSortableColumn="estado" style="min-width:6rem">Estado</th>
                         <th pSortableColumn="periodo.fechaInicio" style="min-width:3rem">Periodo</th>
+                        <th pSortableColumn="image" style="min-width:3rem">Imagen</th>
                         <th style="min-width:5rem"></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-miembro>
                     <tr>
+                        <td>{{ miembro.asociado.nombre }}</td>
+                        <td>{{ miembro.cargo.nombre }}</td>
                         <td>{{ miembro.estado == 'A' ? 'Activo/a': 'Inactivo' }}</td>
+                        <td>{{ miembro.periodo.fechaInicio +"-"+ miembro.periodo.fechaFinal }}</td>
                         <td *ngIf="miembro.imagen != null && miembro.imagen != '' "><img
                                 [src]=" 'assets/images/miembros/' + miembro.imagen" [alt]="miembro.estado" width="100"
                                 class="shadow-4" /></td>
                         <td *ngIf="miembro.imagen == null || miembro.imagen == '' "><img
                                 src=" assets/images/miembros/no.jpg" alt="'No imagen'" width="100" class="shadow-4" />
                         </td>
-                        <td>{{ miembro.cargo.nombre }}</td>
-                        <td>{{ miembro.asociado.nombre }}</td>
-                        <td>{{ miembro.periodo.fechaInicio +"-"+ miembro.periodo.fechaFinal }}</td>
+                        <td>{{ miembro.username}}</td>
 
                         <td>
                             <button pButton pRipple icon="bi bi-pencil-square"
@@ -87,25 +88,44 @@
             <img class="product-image" *ngIf="!miembro.imagen" />
 
             <div class="formgrid grid row">
-                <div class="field col-6">
-                    <label for="cargo">cargo</label>
-                    <p-dropdown [options]="cargos" [(ngModel)]="miembro.cargo" optionLabel="nombre"></p-dropdown>
-                </div>
-                <div class="field col-6">
-                    <label for="periodo">periodo</label>
-                    <p-dropdown [options]="periodos" [(ngModel)]="miembro.periodo"
-                        optionLabel="fechaInicio"></p-dropdown>
-                </div>
                 <div class="field col-12">
-                    <label for="asociado">asociado</label>
+                    <label for="asociado">Asociado</label>
                     <p-dropdown [options]="asociados" [(ngModel)]="miembro.asociado" optionLabel="nombre"></p-dropdown>
                 </div>
+                <div class="col col-12 ">
+                    <div class="field">
+                        <label for="name">Username</label><br>
+                        <input type="text" pInputText [(ngModel)]="miembro.username" required autofocus />
+                        <small class="p-error" *ngIf="submitted && !miembro.username"> es requerida!</small>
+                    </div>
+                    <div class="field">
+                        <label for="name">Role</label><br>
+                        <input type="text" pInputText [(ngModel)]="miembro.role" required autofocus />
+                        <small class="p-error" *ngIf="submitted && !miembro.role"> es requerida!</small>
+                    </div>
+                    <div class="field">
+                        <label for="name">Contraseña</label><br>
+                        <input type="text" pInputText [(ngModel)]="miembro.password" required autofocus />
+                        <small class="p-error" *ngIf="submitted && !miembro.password"> es requerida!</small>
+                    </div>
+                </div>
+
                 <div class="col col-12 ">
                     <label for="formFile" class="mb-2">Seleccione una Image:</label><br>
                     <input class="form-control" type="file" id="formFile" (change)="seleccionarImagen($event)"
                         accept="image/*" />
-
                 </div>
+                <div class="field col-6">
+                    <label for="cargo">Cargo</label>
+                    <p-dropdown [options]="cargos" [(ngModel)]="miembro.cargo" optionLabel="nombre"></p-dropdown>
+                </div>
+                <div class="field col-6">
+                    <label for="periodo">Periodo</label>
+                    <p-dropdown [options]="periodos" [(ngModel)]="miembro.periodo"
+                        optionLabel="fechaInicio"></p-dropdown>
+                </div>
+             
+
             </div>
 
 

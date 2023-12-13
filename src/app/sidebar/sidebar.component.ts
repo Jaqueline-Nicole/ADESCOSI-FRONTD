@@ -3,6 +3,8 @@ import { navbarData,  } from './nav-data';
 import { MatIconModule } from '@angular/material/icon';
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { INavbarData, fadeInOut } from './helper';
+import { Router } from '@angular/router';
+import { AuthService } from '../usuarios/auth.service';
 
 
 interface SideNavToggle {
@@ -39,6 +41,9 @@ export class SidebarComponent implements OnInit {
     }
   }
 
+  constructor(private router:Router, public authService: AuthService){}
+
+
   ngOnInit(): void {
     this.screenWidth = window.innerWidth;
 
@@ -70,6 +75,11 @@ export class SidebarComponent implements OnInit {
       }
     }
     item.expanded = !item.expanded;
+  }
+
+  logout(): void {
+    this.authService.logout(); 
+    this.router.navigate(['/login'])
   }
 
 

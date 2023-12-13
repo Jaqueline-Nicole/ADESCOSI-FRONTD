@@ -6,6 +6,7 @@ import { MiembroService } from '../miembros/miembro.service';
 import { TipoActividadService } from '../tipo-actividades/tipo-actividad.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ActividadSecundariaService } from './actividad-secundaria.service';
+import { AuthService } from '../usuarios/auth.service';
 
 @Component({
   selector: 'app-actividad-secundarias',
@@ -19,7 +20,7 @@ export class ActividadSecundariasComponent implements OnInit {
   actividad!: ActividadSecundaria;
   segDialong: boolean = false;
   title: string = "";
-  
+
   miembros!: Miembro[];
   tipoActs!: TipoActividad[];
 
@@ -28,16 +29,17 @@ export class ActividadSecundariasComponent implements OnInit {
   submitted: boolean = false;
   indexSelect: number = -1;
 
-  miembro: Miembro = { id:3 }
+  miembro: Miembro = this.authService.miembro;
 
   constructor(
     private miembroService: MiembroService,
     private tipoService: TipoActividadService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private segundoService: ActividadSecundariaService, 
+    private segundoService: ActividadSecundariaService,
+    private authService: AuthService
 
-  ){}
+  ) { }
 
   ngOnInit(): void {
     this.getAll();
@@ -52,7 +54,7 @@ export class ActividadSecundariasComponent implements OnInit {
   editIng(actividad: ActividadSecundaria) {
     this.actividad = { ...actividad };
     this.segDialong = true;
-    this.title = 'Actualiza egreso';
+    this.title = 'Actualizar ';
     this.indexSelect = this.actividades.indexOf(actividad);
   }
   hideDialog() {
@@ -101,7 +103,7 @@ export class ActividadSecundariasComponent implements OnInit {
     this.actividad.miembro = this.miembro;
     this.segundoService.save(this.createFormData() as ActividadSecundaria).subscribe({
       next: (json) => {
-        this.actividades.unshift(json.actividad)
+        this.actividades.unshift(json.producto)
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 3000 });
       },
       error: (err) => {
@@ -114,7 +116,7 @@ export class ActividadSecundariasComponent implements OnInit {
         else {
           this.messageService.add({
             severity: 'error',
-            summary: 'Resultado', detail: `${err.error}`, life: 3000
+            summary: 'Resultado', detail: `${err.error.message}`, life: 3000
           });
         }
       }
@@ -127,7 +129,7 @@ export class ActividadSecundariasComponent implements OnInit {
     let id = this.actividad.id;
     this.segundoService.update(this.createFormData() as ActividadSecundaria, id).subscribe({
       next: (json) => {
-        Object.assign(this.actividades[this.indexSelect], json.actividad);
+        Object.assign(this.actividades[this.indexSelect], json.producto);
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 1000 });
       },
       error: (err) => {
@@ -140,6 +142,26 @@ export class ActividadSecundariasComponent implements OnInit {
     this.actividad = {};
   }
 
+  delete(actividad: ActividadSecundaria) {
+    this.confirmationService.confirm({
+      message: 'Estas seguro de eliminar ' + actividad.descripcion + '?',
+      header: 'Confirmar',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.segundoService.delete(actividad.id).subscribe({
+          next: (response) => {
+            this.actividades = this.actividades.filter((val) => val.id !== actividad.id);
+            this.actividad = {};
+            this.messageService.add({ severity: 'success', summary: 'Resultado', detail: `${response.message}`, life: 3000 });
+
+          },
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Resultado2', detail: `${err.error.message}`, life: 1000 });
+          }
+        })
+      },
+    });
+  }
   seleccionarImagen(event) {
     this.imagen = event.target.files[0];
     console.log(this.imagen);

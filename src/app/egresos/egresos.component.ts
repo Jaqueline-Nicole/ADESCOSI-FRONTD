@@ -7,6 +7,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { EgresoService } from './egreso.service';
 import { DatePipe } from '@angular/common';
 import { TipoEgresoService } from '../tipo-egresos/tipo-egreso.service';
+import { AuthService } from '../usuarios/auth.service';
 
 @Component({
   selector: 'app-egresos',
@@ -32,7 +33,7 @@ export class EgresosComponent implements OnInit {
   selectedEgresos!: Egreso[] | null;
   private imagen: File;
 
-  miembro: Miembro = { id:3 }
+  miembro: Miembro = this.authService.miembro
   date: Date | undefined;
 
 
@@ -43,7 +44,8 @@ export class EgresosComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private egresoService: EgresoService, 
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private authService: AuthService
 
     ) { }
 

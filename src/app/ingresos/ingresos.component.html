@@ -9,6 +9,8 @@
                     placeholder="Buscar..." />
             </span>
         </div>
+
+
     </div>
     <div class="card-body">
         <div class="card">
@@ -18,8 +20,19 @@
                 [showCurrentPageReport]="true">
                 <ng-template pTemplate="caption">
                     <div class="flex align-items-center justify-content-between">
-                        <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2 "
+                        <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
                             styleClass="mb-4 gap-4" (click)="openNew()"></button>
+                        <div class="flex align-items-center justify-content-between ">
+                            <label for="fechaInicio">Fecha de inicio:</label>
+                            <input pInputText type="date" [(ngModel)]="fechaInicio" id="fechaInicio" class="mr-8  ml-2" />
+
+                            <label for="fechaFin">Fecha de fin:</label>
+                            <input pInputText type="date" [(ngModel)]="fechaFin" id="fechaFin" class="mr-8  ml-2" />
+
+                            <button pButton pRipple pButton pRipple icon="bi bi-file-pdf" style="color: black;"
+                                class="p-button-rounded p-button-raised mr-3"
+                                (click)="buscarIngresosPorFecha()"></button>
+                        </div>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
@@ -28,8 +41,8 @@
                         <th pSortableColumn="" style="min-width:5rem">Fecha de ingreso</th>
                         <th pSortableColumn="" style="min-width:5rem">Imagen</th>
                         <th pSortableColumn="" style="min-width:5rem">Descripcion</th>
-                        <th pSortableColumn="" style="min-width:10rem">Tipo de actividad</th>
-                        <th pSortableColumn="" style="min-width:10rem">Miembro</th>
+                        <th pSortableColumn="" style="min-width:10rem">Tipo de ingreso</th>
+                        <th pSortableColumn="" style="min-width:10rem">Registrado por </th>
                         <th pSortableColumn="" style="min-width:5rem"></th>
 
 
@@ -51,8 +64,10 @@
                         <td>{{ ingreso.miembro.asociado.nombre }}</td>
 
                         <td>
-                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
-                                (click)="editIng(ingreso)"></button>
+                            <button pButton pRipple icon="bi bi-pencil-square"
+                                class="p-button-rounded p-button-success mr-2" (click)="editIng(ingreso)"
+                                style="color: black;"></button>
+
 
                         </td>
                     </tr>

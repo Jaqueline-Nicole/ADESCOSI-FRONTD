@@ -1,7 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Miembro } from './miembro';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
+import { Router } from '@angular/router';
+import { AuthService } from '../usuarios/auth.service';
+import Swal from 'sweetalert2';
 
 
 @Injectable({
@@ -10,29 +13,64 @@ import { Observable } from 'rxjs';
 export class MiembroService {
 
   private urlEndPoint: string = 'http://localhost:8080/api/miembros';
-  private httpHeader:HttpHeaders = new HttpHeaders({'content-type':'aplication/json'})
+  private urlEndPoint1: string = 'http://localhost:8080/auth/register';
+  private httpHeader: HttpHeaders = new HttpHeaders({ 'content-type': 'application/json' })
 
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
-  getAll(): Observable<Miembro[]>{
+  //metodo para la autorizacion
+  private isNotAutorized(e): boolean {
+    if (e.status == 401) {
+      this.router.navigate(['/login'])
+      return true;
+    }
+    if (e.status == 403) {
+      Swal.fire('Prohibido', `${this.authService.miembro}`)
+      console.log(e);
+      this.router.navigate(['/login']);
+      return true;
+
+    }
+    return false;
+
+  }
+
+  getAll(): Observable<Miembro[]> {
     return this.http.get<Miembro[]>(this.urlEndPoint)
   }
-  getAllInactivos(): Observable<Miembro[]>{
+  getAllInactivos(): Observable<Miembro[]> {
     return this.http.get<Miembro[]>(this.urlEndPoint + '/inactivos')
   }
-  getById(id:number): Observable<Miembro>{
+  getById(id: number): Observable<Miembro> {
     return this.http.get<Miembro>(`${this.urlEndPoint}/${id}`);
   }
-  save(miembro: Miembro):Observable<any>{
-    return this.http.post(this.urlEndPoint, miembro)
+  save(request: Miembro): Observable<any> {
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.post(this.urlEndPoint1, request, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
-  update(miembro: Miembro, id:number):Observable<any>{
+  update(miembro: Miembro, id: number): Observable<any> {
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
     return this.http.put(`${this.urlEndPoint}/${id}`, miembro);
   }
 
-  changeState(estado:string, miembro:Miembro):Observable<any>
-  {
+  changeState(estado: string, miembro: Miembro): Observable<any> {
     return this.http.put(`${this.urlEndPoint}/change-state?estado=${estado}`, miembro);
   }
   // delete(id:number):Observable<any>{

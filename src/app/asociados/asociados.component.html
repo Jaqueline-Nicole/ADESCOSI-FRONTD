@@ -17,21 +17,27 @@
                 <ng-template pTemplate="left">
                     <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
                         (click)="openNew()"></button>
+                    <!-- HTML -->
+                    <input type="text" [(ngModel)]="letraFiltro" placeholder="Filtrar por letra" class="filtro-input">
+                    <button (click)="generatePDF()" class="p-button-raised p-button-success generar-pdf">Generar
+                        PDF</button>
+
+
                 </ng-template>
                 <ng-template pTemplate="right">
                     <div class="flex flex-wrap gap-3">
                         <div class="flex align-items-center">
-                            <p-radioButton name="pizza" value="a" [(ngModel)]="ingredient" inputId="ingredient3"
+                            <p-radioButton name="pizza" value="activos" [(ngModel)]="optionRadioButton" inputId="ingredient3"
                                 (ngModelChange)="checkChanged3($event)"></p-radioButton>
                             <label for="ingredient2" class="ml-2">Activo</label>
                         </div>
                         <div class="flex align-items-center">
-                            <p-radioButton name="pizza" value="Cheese" [(ngModel)]="ingredient" inputId="ingredient1"
+                            <p-radioButton name="pizza" value="Cheese" [(ngModel)]="optionRadioButton" inputId="ingredient1"
                                 (ngModelChange)="checkChanged($event)"></p-radioButton>
                             <label for="ingredient1" class="ml-2">Inactivo</label>
                         </div>
                         <div class="flex align-items-center">
-                            <p-radioButton name="pizza" value="Mushroom" [(ngModel)]="ingredient" inputId="ingredient2"
+                            <p-radioButton name="pizza" value="Mushroom" [(ngModel)]="optionRadioButton" inputId="ingredient2"
                                 (ngModelChange)="checkChanged2($event)"></p-radioButton>
                             <label for="ingredient2" class="ml-2">Fallecido</label>
                         </div>
@@ -57,7 +63,7 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-asociado>
                     <tr>
-                        <td >{{ asociado.nombre }}</td>
+                        <td>{{ asociado.nombre }}</td>
                         <td>{{ asociado.fechaNacimiento | date:"dd/MM/yyyy" }}</td>
                         <td>{{ asociado.lugarNacimiento }}</td>
                         <td>{{ asociado.estado == 'A' ? 'Activo/a': (asociado.estado == 'I'?'Inactivo':'Fallecido') }}
@@ -65,8 +71,9 @@
                         <td>{{ asociado.estadoCivil == 'C' ? 'Casado/a':(asociado.estadoCivil == 'S' ?
                             'Soltero/a':(asociado.estadoCivil == 'D' ? 'Divorciado/a':'Viudo/a'))}}</td>
                         <td>
-                            <button pButton pRipple *ngIf="asociado.estado !=='F' && asociado.estado !=='I' " icon="bi bi-pencil-square"
-                                style="color:black" class="p-button-rounded p-button-success mr-2"
+                            <button pButton pRipple *ngIf="asociado.estado !=='F' && asociado.estado !=='I' "
+                                icon="bi bi-pencil-square" style="color:black"
+                                class="p-button-rounded p-button-success mr-2"
                                 (click)="editAsociado(asociado)"></button>
 
                             <button pButton pRipple *ngIf="asociado.estado !=='F' " icon="pi pi-arrow-right-arrow-left"
@@ -103,14 +110,15 @@
                     <small class="p-error" *ngIf="submitted && !asociado.nombre">es requerida!</small>
                 </div>
                 <div class="file col-12">
-                    <label class="mb-1"><b>Lugar de nacimiento:</b></label>                    
+                    <label class="mb-1"><b>Lugar de nacimiento:</b></label>
                     <div class="p-inputgroup">
                         <input pInputText placeholder="Lugar" [(ngModel)]="asociado.lugarNacimiento" />
                         <span class="p-inputgroup-addon" style="background-color: #3B82F6;">
                             <i class="fa-solid fa-location-dot" style="color: white;"></i>
                         </span>
                     </div>
-                    <small class="p-error" *ngIf="submitted && !asociado.lugarNacimiento">El nombre es necesario!</small>
+                    <small class="p-error" *ngIf="submitted && !asociado.lugarNacimiento">El nombre es
+                        necesario!</small>
 
                 </div>
                 <div class="field col-12"><br>
@@ -120,9 +128,10 @@
                     <div #sig></div>
                 </div>
                 <div class="field col-12">
-                    <label class="mb-1"><b>Fecha de nacimiento:</b> (mes/dia/año)</label>                    
-                    <p-calendar  [showIcon]="true" [(ngModel)]="date"></p-calendar>
-                    <small class="p-error" *ngIf="submitted && !asociado.fechaNacimiento">La fecha es requerida y no puede ser menor de 18 años</small>
+                    <label class="mb-1"><b>Fecha de nacimiento:</b> (mes/dia/año)</label>
+                    <p-calendar [showIcon]="true" [(ngModel)]="date"></p-calendar>
+                    <small class="p-error" *ngIf="submitted && !asociado.fechaNacimiento">La fecha es requerida y no
+                        puede ser menor de 18 años</small>
                 </div>
             </ng-template>
             <ng-template pTemplate="footer">

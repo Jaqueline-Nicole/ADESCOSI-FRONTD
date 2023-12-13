@@ -13,7 +13,7 @@
     <div class="card-body">
         <div class="card">
             <p-toast></p-toast>
-            <p-table #dt [value]="actividades" [rows]="5" [paginator]="true" [globalFilterFields]="['tipoEgreso.nombre']"
+            <p-table #dt [value]="actividades" [rows]="5" [paginator]="true" [globalFilterFields]="['descripcion']"
                 [tableStyle]="{ 'min-width': '25rem' }" [(selection)]="selectedSegs" [rowHover]="true" dataKey="id"
                 [showCurrentPageReport]="true">
                 <ng-template pTemplate="caption">
@@ -24,29 +24,34 @@
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="" style="min-width:5rem">Descripcion</th>
+                        <th pSortableColumn="descripcion" style="min-width:5rem">Descripcion</th>
                         <th pSortableColumn="" style="min-width:5rem">Fecha de registro</th>
                         <th pSortableColumn="" style="min-width:5rem">Imagen</th>
-                        <th pSortableColumn="" style="min-width:5rem">Actividad</th>
+                        <th pSortableColumn="" style="min-width:5rem">Tipo actividad</th>
                         <th pSortableColumn="" style="min-width:5rem">Miembro</th>
+                        <th pSortableColumn="" style="min-width:5rem"></th>
 
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-egreso>
+                <ng-template pTemplate="body" let-actividad>
                     <tr>
-                        <td>{{ egreso.descripcion }}</td>
-                        <td *ngIf="egreso.imagen != null && egreso.imagen != '' "><img
-                                [src]=" 'assets/images/miembros/' + egreso.imagen" [alt]="egreso.estado" width="100"
-                                class="shadow-4" /></td>
-                        <td *ngIf="egreso.imagen == null || egreso.imagen == '' "><img
+                        <td>{{ actividad.descripcion }}</td>
+                        <td>{{ actividad.fecha | date:"dd/MM/yyyy"}}</td>
+                        <td *ngIf="actividad.imagen != null && actividad.imagen != '' "><img
+                                [src]=" 'assets/images/miembros/' + actividad.imagen" [alt]="actividad.estado"
+                                width="100" class="shadow-4" /></td>
+                        <td *ngIf="actividad.imagen == null || actividad.imagen == '' "><img
                                 src=" assets/images/miembros/no.jpg" alt="'No imagen'" width="100" class="shadow-4" />
                         </td>
-                        <td>{{ egreso.tipo.nombre }}</td>
-                        <td>{{ egreso.miembro.asociado.nombre }}</td>
-                        <td>{{ egreso.fechaPago | date:"dd/MM/yyyy"}}</td>
+                        <td>{{ actividad.tipo.nombre }}</td>
+                        <td>{{ actividad.miembro.asociado.nombre }}</td>
                         <td>
-                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
-                                (click)="editIng(egreso)"></button>
+                            <button pButton pRipple icon="bi bi-pencil-square"
+                                class="p-button-rounded p-button-success mr-2" (click)="editIng(actividad)"
+                                style="color: black;"></button>
+                            <button pButton pRipple icon="fas fa-trash" class="p-button-rounded p-button-danger"
+                                style="color: black;" (click)="delete(actividad)"></button>
+
 
                         </td>
                     </tr>
@@ -64,9 +69,8 @@
                 </div>
 
                 <div class="field col">
-                    <label for="asociado">Tipo de egreso</label>
-                    <p-dropdown [options]="tipoActs" [(ngModel)]="actividad.tipo"
-                        optionLabel="nombre"></p-dropdown>
+                    <label for="asociado">Tipo actividad</label>
+                    <p-dropdown [options]="tipoActs" [(ngModel)]="actividad.tipo" optionLabel="nombre"></p-dropdown>
                 </div>
                 <div class="col mb-3">
                     <label for="formFile">Seleccione una Image</label>

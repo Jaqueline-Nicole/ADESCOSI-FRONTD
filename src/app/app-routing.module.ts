@@ -16,9 +16,10 @@ import { ProyectosComponent } from './proyectos/proyectos.component';
 import { FiestaPatronalesComponent } from './fiesta-patronales/fiesta-patronales.component';
 import { MobiliariosComponent } from './mobiliarios/mobiliarios.component';
 import { ActividadSecundariasComponent } from './actividad-secundarias/actividad-secundarias.component';
+import { ActividadPrincipalesComponent } from './actividad-principales/actividad-principales.component';
 
 const routes: Routes = [
-  // { path: '', redirectTo:'home', pathMatch:'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'cargos', component: CargosComponent },
   { path: 'periodos', component: PeriodosComponent },
   { path: 'home', component: HomeComponent },
@@ -34,10 +35,8 @@ const routes: Routes = [
   { path: 'proyectos', component: ProyectosComponent },
   { path: 'fiestas', component: FiestaPatronalesComponent },
   { path: 'mobiliarios', component: MobiliariosComponent },
-  { path: 'secundarias', component: ActividadSecundariasComponent }
-
-
-
+  { path: 'secundarias', component: ActividadSecundariasComponent },
+  { path: 'principales', component: ActividadPrincipalesComponent }
 ];
 
 @NgModule({

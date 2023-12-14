@@ -22,7 +22,9 @@ export class MiembrosComponent implements OnInit {
   title: string = ""
 
  
-  ingredient!:string;
+  // ingredient!:string;
+  optionRadioButton: string = "activos"
+
 
 
   periodos!: Periodo[];

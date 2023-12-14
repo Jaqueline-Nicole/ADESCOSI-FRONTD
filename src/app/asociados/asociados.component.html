@@ -100,7 +100,7 @@
             <ng-template pTemplate="content">
                 <div class=" file col-12 mb-1">
                     <!-- <h3 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Nombre:</h3> -->
-                    <label class="mb-1"><b>Nombre:</b></label>
+                    <label class="mb-1"><b>Nombre completo:</b></label>
                     <div class="p-inputgroup ">
                         <input pInputText placeholder="Nombre" [(ngModel)]="asociado.nombre" />
                         <span class="p-inputgroup-addon" style="background-color: #3B82F6;">
@@ -117,7 +117,7 @@
                             <i class="fa-solid fa-location-dot" style="color: white;"></i>
                         </span>
                     </div>
-                    <small class="p-error" *ngIf="submitted && !asociado.lugarNacimiento">El nombre es
+                    <small class="p-error" *ngIf="submitted && !asociado.lugarNacimiento">es
                         necesario!</small>
 
                 </div>

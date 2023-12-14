@@ -128,6 +128,15 @@ export class ProyectosComponent implements OnInit {
       });
       return;
     }
+    if (this.date > this.date1) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'La fecha de inicio no puede ser posterior a la fecha de finalización.',
+        life: 3000
+      });
+      return;
+    }
     this.submitted = true;
     this.proyecto.miembro = this.miembro;
     this.proyecto.fechaInicio = this.date;
@@ -168,6 +177,15 @@ export class ProyectosComponent implements OnInit {
         severity: 'error',
         summary: 'Error',
         detail: 'Por favor, complete todos los campos obligatorios antes de actualizar.',
+        life: 3000
+      });
+      return;
+    }
+    if (this.date > this.date1) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'La fecha de inicio no puede ser posterior a la fecha de finalización.',
         life: 3000
       });
       return;

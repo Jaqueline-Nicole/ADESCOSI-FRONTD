@@ -21,12 +21,12 @@
                 <ng-template pTemplate="right">
                     <div class="flex flex-wrap gap-3">
                         <div class="flex align-items-center">
-                            <p-radioButton name="activo" value="activos" [(ngModel)]="ingredient" inputId="ingredient"
+                            <p-radioButton name="activo" value="activos"  [(ngModel)]="optionRadioButton" inputId="ingredient"
                                 (ngModelChange)="checkChanged1($event)"></p-radioButton>
                             <label for="ingredient2" class="ml-2">Activo</label>
                         </div>
                         <div class="flex align-items-center">
-                            <p-radioButton name="inactivo" value="Cheese" [(ngModel)]="ingredient  "
+                            <p-radioButton name="inactivo" value="Cheese" [(ngModel)]="optionRadioButton"
                                 inputId="ingredient1" (ngModelChange)="checkChanged($event)"></p-radioButton>
                             <label for="ingredient1" class="ml-2">Inactivo</label>
                         </div>
@@ -48,6 +48,7 @@
                         <th pSortableColumn="estado" style="min-width:6rem">Estado</th>
                         <th pSortableColumn="periodo.fechaInicio" style="min-width:3rem">Periodo</th>
                         <th pSortableColumn="image" style="min-width:3rem">Imagen</th>
+                        <th style="min-width:5rem">Nombre del miembro</th>
                         <th style="min-width:5rem"></th>
                     </tr>
                 </ng-template>
@@ -110,7 +111,7 @@
                     </div>
                 </div>
 
-                <div class="col col-12 ">
+                <div class="col col-12 mb-3 ">
                     <label for="formFile" class="mb-2">Seleccione una Image:</label><br>
                     <input class="form-control" type="file" id="formFile" (change)="seleccionarImagen($event)"
                         accept="image/*" />

@@ -45,13 +45,13 @@
         styleClass="p-fluid">
         <ng-template pTemplate="content">
             <div class="field">
-                <label for="name">Fecha de Inicio</label><br>
+                <label for="name">Fecha de Inicio: </label><br>
                 <input type="number" pInputText [(ngModel)]="periodo.fechaInicio" required autofocus
                     pattern="[0-9]{4}" />
                 <small class="p-error" *ngIf="submitted && !periodo.fechaInicio">Es necesario!</small>
             </div>
             <div class="field">
-                <label for="name">Fecha de Final</label><br>
+                <label for="name">Fecha de Final:</label><br>
                 <input type="number" pInputText [(ngModel)]="periodo.fechaFinal" required autofocus />
                 <small class="p-error" *ngIf="submitted && !periodo.fechaFinal">Es necesario!</small>
             </div>

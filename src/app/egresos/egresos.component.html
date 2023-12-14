@@ -21,6 +21,17 @@
                         <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2 "
                             styleClass="mb-4 gap-4" (click)="openNew()"></button>
                     </div>
+                    <div class="flex align-items-center justify-content-between ">
+                        <label for="fechaInicio">Fecha de inicio:</label>
+                        <input pInputText type="date" id="fechaInicio" class="mr-8  ml-2" />
+
+                        <label for="fechaFin">Fecha de fin:</label>
+                        <input pInputText type="date" id="fechaFin" class="mr-8  ml-2" />
+
+                        <button pButton pRipple pButton pRipple icon="bi bi-file-pdf" style="color: black;"
+                            class="p-button-rounded p-button-raised mr-3"
+                            ></button>
+                    </div>
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>

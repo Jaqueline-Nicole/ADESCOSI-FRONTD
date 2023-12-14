@@ -7,14 +7,15 @@
         <button icon="close" class="btn-close" @rotate *ngIf="collapsed" (click)="closeSidenav()" style="color: white;">
         </button>
     </div>
-    
-    <div *ngIf="authService.isAuthenticated()">
-        <label for=""><b>Usuario: </b> {{authService.miembro.username}}</label>
-    </div>
-
     <div class="scrollwrap scrollwrap_delayed">
         <ul class="sidenav-nav">
             <!-- cargos -->
+            <li class="sidenav-nav-item" *ngIf="authService.isAuthenticated()" >
+                <a class="sidenav-nav-link">
+                    <mat-icon class="sidenav-link-icon">account_circle</mat-icon>
+                    <span class="sidenav-link-text">Usuario: {{authService.miembro.nom}}</span>
+                </a>
+            </li>
             <li class="sidenav-nav-item" *ngFor="let data of navData ">
                 <a class="sidenav-nav-link" (click)="handleClick(data)" *ngIf="data.items && data.items.length > 0">
                     <mat-icon class="sidenav-link-icon" fontIcon="{{data.icon}}" (click)="toggleCollapse()"></mat-icon>
@@ -36,6 +37,7 @@
                     <app-sublevel-menu [data]="data" [collapsed]="collapsed" [multiple]="multiple"
                         [expanded]="data.expanded"></app-sublevel-menu>
                 </div>
+                
 
             </li>
             <li class="sidenav-nav-item" *ngIf="authService.isAuthenticated()" >
@@ -44,6 +46,7 @@
                     <span class="sidenav-link-text">Cerrar sección</span>
                 </a>
             </li>
+            
         </ul>
 
     </div>

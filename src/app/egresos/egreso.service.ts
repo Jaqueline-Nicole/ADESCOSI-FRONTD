@@ -5,6 +5,8 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../usuarios/auth.service';
 import Swal from 'sweetalert2';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Injectable({
   providedIn: 'root'
@@ -68,4 +70,58 @@ export class EgresoService {
       })
     );
   }
+
+  buscarEgresosPorFecha(fechaInicio: string, fechaFin: string): Observable<Egreso[]> {
+    const url = `${this.urlEndPoint}/reportes?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+    return this.http.get<Egreso[]>(url);
+  }
+
+
+  //PDF
+  // ...
+
+  imprimir(encabezado: string[], cuerpo: Array<any>, titulo: string, guardar: boolean) {
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'px',
+      format: 'letter',
+    });
+  
+    // Configurar márgenes para el título
+    doc.setFontSize(14);
+    doc.text('ADESCO (Asociación de Desarrollo Comunal)', doc.internal.pageSize.width / 2, 20, { align: 'center' });
+    doc.setFontSize(12);
+    doc.text(titulo, doc.internal.pageSize.width / 2, 40, { align: 'center' });
+  
+    // Configurar márgenes y estilos para la tabla
+    autoTable(doc, {
+      head: [encabezado],
+      body: cuerpo,
+      startY: 60,
+      margin: { top: 70 },
+      styles: {
+        fontSize: 12,
+        textColor: [0, 0, 0],
+        fillColor: [255, 255, 255],
+        lineWidth: 0.5,
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold' },
+      },
+      didDrawPage: (data) => {
+        const totalPagesExp = doc.internal.pages.length - 1;
+        const text = `Página ${data.pageNumber} de ${totalPagesExp}`;
+        doc.setFontSize(10);
+        doc.text(text, data.settings.margin.left, doc.internal.pageSize.height - 10);
+        // doc.text('Pie de página personalizado', data.settings.margin.left, doc.internal.pageSize.height - 10, { align: 'center' });
+      },
+    });
+  
+    if (guardar) {
+      doc.save('Egreso ADESCO.pdf');
+    } else {
+      // No se llama a doc.save si no se debe guardar el PDF
+    }
+  }
+  
 }

@@ -24,19 +24,22 @@
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
+                        <th pSortableColumn="" style="min-width:2rem">Registrado por</th>
                         <th pSortableColumn="" style="min-width:2rem">Descripcion</th>
+                        <th pSortableColumn="" style="min-width:2rem">Tipo de actividad</th>
                         <th pSortableColumn="" style="min-width:2rem">Fecha de registro</th>
                         <th pSortableColumn="" style="min-width:2rem">Imagen</th>
-                        <th pSortableColumn="" style="min-width:2rem">Miembro</th>
-                        <th pSortableColumn="" style="min-width:2rem">Actividad</th>
-                        <th pSortableColumn="" style="min-width:2rem">Fiesta</th>
+                        <th pSortableColumn="" style="min-width:2rem">Fiesta Patronal</th>
                         <th pSortableColumn="" style="min-width:2rem"></th>
 
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-actividad>
                     <tr>
+                        <td>{{ actividad.miembro.asociado.nombre }}</td>
                         <td>{{ actividad.descripcion }}</td>
+                        <td>{{ actividad.tipo.nombre }}</td>
+
                         <td>{{ actividad.fechaRealizada | date:"dd/MM/yyyy" }}</td>
                         <td>
                             <ng-container *ngIf="actividad.imagen; else noImage">
@@ -48,8 +51,6 @@
                                     class="activity-image p-shadow-4" />
                             </ng-template>
                         </td>
-                        <td>{{ actividad.miembro.asociado.nombre }}</td>
-                        <td>{{ actividad.tipo.nombre }}</td>
                         <td>{{ actividad.fiesta.descripcion }}</td>
                         <td>
                             <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
@@ -65,28 +66,27 @@
             styleClass="p-fluid">
 
             <ng-template pTemplate="content">
-                <div class="field">
-                    <label for="name">Descripcion</label><br>
+                <div class="col mb-2">
+                    <label class="mb-1" for="name">Descripción</label><br>
                     <input type="text" pInputText [(ngModel)]="actividadPrincipal.descripcion" required autofocus />
                     <small class="p-error" *ngIf="submitted && !actividadPrincipal.descripcion">es requerida!</small>
                 </div>
-
-                <div class="field col">
-                    <label for="asociado">Tipo actividad</label>
+                <div class="col mb-2">
+                    <label class="mb-1" for="asociado">Tipo de actividad:</label>
                     <p-dropdown [options]="tipoActs" [(ngModel)]="actividadPrincipal.tipo"
                         optionLabel="nombre"></p-dropdown>
                 </div>
-                <div class="field col">
-                    <label for="">Fiesta</label>
+                <div class="col mb-2">
+                    <label class="mb-1" for="">Fiesta</label>
                     <p-dropdown [options]="fiestas" [(ngModel)]="actividadPrincipal.fiesta"
                         optionLabel="descripcion"></p-dropdown>
                 </div>
-                <div class="col mb-3">
-                    <label for="formFile">Seleccione una Image</label>
+                <div class="col mb-2">
+                    <label class="mb-1" for="formFile">Seleccione una Image:(no es necesaria)</label>
                     <input class="form-control" type="file" id="formFile" (change)="seleccionarImagen($event)"
                         accept="image/*" />
                 </div>
-                <div class="field">
+                <div class="col">
                     <label class="mb-1"><b>Fecha de realizacion:</b> (mes/dia/año)</label>
                     <p-calendar [showIcon]="true" [(ngModel)]="date"></p-calendar>
                     <small class="p-error" *ngIf="submitted && !actividadPrincipal.fechaRealizada">La fecha es requerida

@@ -39,10 +39,11 @@ export class PeriodosComponent implements OnInit {
   }
   validateDate(date: number): boolean {
     const currentYear = this.getCurrentYear();
-  
-    // Verificar si la fecha tiene cuatro dígitos y no es mayor que el año actual
-    return date.toString().length === 4 && date <= currentYear;
+    
+    // Verificar si la fecha tiene cuatro dígitos y está dentro del rango permitido
+    return date.toString().length === 4 && date >= 1990 && date <= currentYear;
   }
+  
   validateDateRange(startDate: number, endDate: number): boolean {
     return endDate === startDate + 2 && endDate >= startDate;
   }
@@ -66,26 +67,6 @@ export class PeriodosComponent implements OnInit {
 
   }
 
-  // deletePeriodo(periodo: Periodo) {
-  //   this.confirmationService.confirm({
-  //     message: 'Estas seguro de eliminar ?',
-  //     header: 'Confirm',
-  //     icon: 'pi pi-exclamation-triangle',
-  //     accept: () => {
-  //       this.periodoService.delete(periodo.id).subscribe({
-  //         next: (response)=>{
-  //           this.periodos = this.periodos.filter((val) => val.id !== periodo.id);
-  //           this.periodo = {};
-  //           this.messageService.add({ severity: 'success', summary: 'Resultado', detail: `${response.message}`, life: 3000 });
-      
-  //         },
-  //         error: (err)=>{
-  //           this.messageService.add({ severity: 'error', summary: 'Resultado', detail: `${err.message}`, life: 1000 });
-  //         }
-  //       })
-  //       },
-  //   });
-  // }
 
   getEventValue($event:any):string{
     return $event.target.value;
@@ -95,41 +76,17 @@ export class PeriodosComponent implements OnInit {
     this.perDialog = false;
     this.submitted = false;
   }
-  // create():void{
-  //   this.submitted = true;
-  //   this.periodoService.save(this.periodo).subscribe({
-  //     next: (json) => {
-
-  //       this.periodos.unshift(json.periodo);
-  //       this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 3000 });
-  //     },
-  //     error: (err) => {
-  //       if(err.status == 409)
-  //       {
-  //         this.messageService.add({ severity: 'error', 
-  //         summary: 'Resultado', detail: `${err.error.message}`, life: 3000 });
-  //       }
-  //       else
-  //       {
-  //         this.messageService.add({ severity: 'error', 
-  //         summary: 'Resultado', detail: `${err.error}`, life: 3000 });
-  //       }
-
-  //     }
-  //   });
-  //   this.perDialog = false;
-  // }
   create(): void {
     this.submitted = true;
     if (!this.validateDate(this.periodo.fechaInicio) || !this.validateDate(this.periodo.fechaFinal)) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'El año debe ser de cuatro dígitos y no mayor al año actual.',
-        life: 3000
-      });
-      return;
-    }
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'El año debe ser de cuatro dígitos y estar entre 1990 y el año actual.',
+      life: 3000
+    });
+    return;
+  }
   
     if (!this.validateDateRange(this.periodo.fechaInicio, this.periodo.fechaFinal)) {
       this.messageService.add({
@@ -140,6 +97,8 @@ export class PeriodosComponent implements OnInit {
       });
       return;
     }
+
+    
   
     this.periodoService.save(this.periodo).subscribe({
       next: (json) => {
@@ -175,7 +134,7 @@ export class PeriodosComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'El año debe ser de cuatro dígitos y no mayor al año actual.',
+        detail: 'El año debe ser de cuatro dígitos y estar entre 1990 y el año actual.',
         life: 3000
       });
       return;
@@ -207,38 +166,4 @@ export class PeriodosComponent implements OnInit {
     this.perDialog = false;
     this.periodo = {};
   }
-  
-  // update(): void{
-  //   this.submitted = true;
-
-  //   const fechaInicioStr = this.periodo.fechaInicio ? this.periodo.fechaInicio.toString() : '';
-  //   const fechaFinalStr = this.periodo.fechaFinal ? this.periodo.fechaFinal.toString() : '';
-  
-  //   // if (!this.validateDate(fechaInicioStr) || !this.validateDate(fechaFinalStr)) {
-  //   //   // Si el formato no es válido, mostrar un mensaje de error
-  //   //   this.messageService.add({
-  //   //     severity: 'error',
-  //   //     summary: 'Error',
-  //   //     detail: 'El formato de fecha es inválido. Debe ser un año de 4 dígitos.',
-  //   //     life: 3000
-  //   //   });
-  //   //   return;  // No continuar con la operación
-  //   // }
-  //   let id = this.periodo.id;
-  //   this.periodoService.update(this.periodo, id).subscribe(
-  //     {
-  //       next: (json) =>{
-  //         Object.assign(this.periodos[this.indexSelect], json.periodo);
-  //         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 1000 });
-  //       },
-  //       error: (err) =>{
-  //         this.messageService.add({ severity: 'error', summary: 'Resultado', detail: `${err.message}`, life: 1000 });
-  //         console.log('code status: ' + err.status);
-  //         console.log(err.message);
-  //       }
-  //     }
-  //   );
-  //   this.perDialog = false;
-  //   this.periodo = {};
-  // }
 }

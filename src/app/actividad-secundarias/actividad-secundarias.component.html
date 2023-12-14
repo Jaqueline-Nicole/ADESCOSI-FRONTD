@@ -24,18 +24,20 @@
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
+                        <th pSortableColumn="" style="min-width:5rem">Registrado por</th>
                         <th pSortableColumn="descripcion" style="min-width:5rem">Descripcion</th>
+                        <th pSortableColumn="" style="min-width:5rem">Tipo actividad</th>
                         <th pSortableColumn="" style="min-width:5rem">Fecha de registro</th>
                         <th pSortableColumn="" style="min-width:5rem">Imagen</th>
-                        <th pSortableColumn="" style="min-width:5rem">Tipo actividad</th>
-                        <th pSortableColumn="" style="min-width:5rem">Miembro</th>
                         <th pSortableColumn="" style="min-width:5rem"></th>
 
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-actividad>
                     <tr>
+                        <td>{{ actividad.miembro.asociado.nombre }}</td>
                         <td>{{ actividad.descripcion }}</td>
+                        <td>{{ actividad.tipo.nombre }}</td>
                         <td>{{ actividad.fecha | date:"dd/MM/yyyy"}}</td>
                         <td *ngIf="actividad.imagen != null && actividad.imagen != '' "><img
                                 [src]=" 'assets/images/miembros/' + actividad.imagen" [alt]="actividad.estado"
@@ -43,8 +45,6 @@
                         <td *ngIf="actividad.imagen == null || actividad.imagen == '' "><img
                                 src=" assets/images/miembros/no.jpg" alt="'No imagen'" width="100" class="shadow-4" />
                         </td>
-                        <td>{{ actividad.tipo.nombre }}</td>
-                        <td>{{ actividad.miembro.asociado.nombre }}</td>
                         <td>
                             <button pButton pRipple icon="bi bi-pencil-square"
                                 class="p-button-rounded p-button-success mr-2" (click)="editIng(actividad)"
@@ -62,18 +62,18 @@
             styleClass="p-fluid">
 
             <ng-template pTemplate="content">
-                <div class="field">
-                    <label for="name">Descripcion</label><br>
+                <div class="col">
+                    <label for="descripcion" class="mb-2">Descripcion</label><br>
                     <input type="text" pInputText [(ngModel)]="actividad.descripcion" required autofocus />
                     <small class="p-error" *ngIf="submitted && !actividad.descripcion">es requerida!</small>
                 </div>
 
-                <div class="field col">
-                    <label for="asociado">Tipo actividad</label>
+                <div class=" col">
+                    <label for="asociado" class="mb-2">Tipo actividad</label>
                     <p-dropdown [options]="tipoActs" [(ngModel)]="actividad.tipo" optionLabel="nombre"></p-dropdown>
                 </div>
-                <div class="col mb-3">
-                    <label for="formFile">Seleccione una Image</label>
+                <div class="col mr-3">
+                    <label for="formFile" class="mb-2">Seleccione una Image</label>
                     <input class="form-control" type="file" id="formFile" (change)="seleccionarImagen($event)"
                         accept="image/*" />
                 </div>

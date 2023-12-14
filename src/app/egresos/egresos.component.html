@@ -13,7 +13,7 @@
     <div class="card-body">
         <div class="card">
             <p-toast></p-toast>
-            <p-table #dt [value]="egresos" [rows]="2" [paginator]="true" [globalFilterFields]="['tipoEgreso.nombre']"
+            <p-table #dt [value]="egresos" [rows]="5" [paginator]="true" [globalFilterFields]="['tipoEgreso.nombre']"
                 [tableStyle]="{ 'min-width': '5rem' }" [(selection)]="selectedEgresos" [rowHover]="true" dataKey="id"
                 [showCurrentPageReport]="true">
                 <ng-template pTemplate="caption">
@@ -22,13 +22,13 @@
                             styleClass="mb-4 gap-4" (click)="openNew()"></button>
                             <div class="flex align-items-center justify-content-between ">
                                 <label for="fechaInicio">Fecha de inicio:</label>
-                                <input pInputText type="date" id="fechaInicio" class="mr-8  ml-2" />
+                                <input pInputText type="date" id="fechaInicio"  [(ngModel)]="fechaInicio" class="mr-8  ml-2" />
         
                                 <label for="fechaFin">Fecha de fin:</label>
-                                <input pInputText type="date" id="fechaFin" class="mr-8  ml-2" />
+                                <input pInputText type="date" id="fechaFin" [(ngModel)]="fechaFin" class="mr-8  ml-2" />
         
                                 <button pButton pRipple pButton pRipple icon="bi bi-file-pdf" style="color: black;"
-                                    class="p-button-rounded p-button-raised mr-3"></button>
+                                    class="p-button-rounded p-button-raised mr-3"  (click)="buscarIngresosPorFecha()"></button>
                             </div>
                     </div>
                     

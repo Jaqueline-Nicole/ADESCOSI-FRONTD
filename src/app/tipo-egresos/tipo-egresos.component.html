@@ -33,24 +33,20 @@
                     <tr>
                         <td>{{ tipoEgreso.nombre }}</td>
                         <td>
-                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
-                                (click)="editTipo(tipoEgreso)"></button>
+                            <button pButton pRipple icon="bi bi-pencil-square" class="p-button-rounded p-button-success mr-2"
+                                (click)="editTipo(tipoEgreso)"  style="color: black;"></button>
                             <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
-                                (click)="deleteTipo(tipoEgreso)"></button>
+                                (click)="deleteTipo(tipoEgreso)"  style="color: black;"></button>
                         </td>
                     </tr>
                 </ng-template>
-                <!-- <ng-template pTemplate="summary">
-                    <div class="flex align-items-center justify-content-between">Total {{ tipoEgreso ?
-                        tipoEgresos.length : 0 }} cargos.</div>
-                </ng-template> -->
             </p-table>
         </div>
         <p-dialog [(visible)]="tipDialog" [style]="{ width: '450px' }" header="{{title}}" [modal]="true"
             styleClass="p-fluid">
             <ng-template pTemplate="content">
                 <div class="field">
-                    <label for="name">Nombre:</label><br>
+                    <label for="name">Tipo de egreso:</label><br>
                     <input type="text" pInputText id="nombre" [(ngModel)]="tipoEgreso.nombre" required autofocus />
                     <small class="p-error" *ngIf="submitted && !tipoEgreso.nombre">es requerida!</small>
                 </div>

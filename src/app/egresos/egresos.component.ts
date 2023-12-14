@@ -8,6 +8,7 @@ import { EgresoService } from './egreso.service';
 import { DatePipe } from '@angular/common';
 import { TipoEgresoService } from '../tipo-egresos/tipo-egreso.service';
 import { AuthService } from '../usuarios/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-egresos',
@@ -44,11 +45,11 @@ export class EgresosComponent implements OnInit {
     private tipoService: TipoEgresoService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private egresoService: EgresoService, 
+    private egresoService: EgresoService,
     private datePipe: DatePipe,
     private authService: AuthService
 
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.getAll();
@@ -90,7 +91,7 @@ export class EgresosComponent implements OnInit {
     const format = 'yyyy-MM-dd'
     const locale = 'es-SV'
     const date = new Date(egreso.fechaPago)
-    date.setTime(date.getTime() + date.getTimezoneOffset() *60 * 7 * 1000)
+    date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 7 * 1000)
     const formattedDate = this.datePipe.transform(date, format, locale)
   }
   hideDialog() {
@@ -160,4 +161,85 @@ export class EgresosComponent implements OnInit {
     this.imagen = event.target.files[0];
     console.log(this.imagen);
   }
+
+  onImprimir() {
+    alert("Imprimir")
+    this.egresoService.getAll().subscribe(
+      response => {
+        const cuerpo = Object(response)['datos'].map(
+          (obj: any) => {
+            const datos = [
+              obj.id,
+              obj.imagen,
+              obj.tipoEgreso
+            ]
+            return datos;
+          }
+        )
+        console.log(cuerpo)
+      }
+    );
+
+  }
+  generatePDF() {
+    if (this.ingresosEncontrados.length > 0) {
+      const encabezado = ['Cantidad', 'Descripción', 'Fecha', 'Registrado por'];
+      const cuerpo = this.ingresosEncontrados.map(ingreso => [
+        "$ " + ingreso.cantidad,
+        ingreso.descripcion,
+        this.formatDate(ingreso.fechaRegistro),
+        ingreso.miembro.asociado.nombre,
+      ]);
+      const titulo = 'Lista de Egresos';
+      const confirmarDescarga = window.confirm('¿Desea descargar el PDF?');
+
+      if (confirmarDescarga) {
+        this.egresoService.imprimir(encabezado, cuerpo, titulo, true);
+      }
+    } else {
+      console.error('No se encontraron ingresos para generar el PDF.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se encontraron ingresos para generar el PDF.',
+      });
+
+    }
+  }
+
+
+  formatDate(date: Date) {
+    // Convierte la fecha en formato ISO a formato 'dd/MM/yyyy'
+    const fecha = new Date(date);
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Sumamos 1 porque los meses comienzan en 0 (enero).
+    const anio = fecha.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+  }
+
+  ingresosEncontrados: Egreso[] = [];
+  fechaInicio: string = '';
+  fechaFin: string = '';
+
+  buscarIngresosPorFecha() {
+    if (this.fechaInicio && this.fechaFin) {
+      this.egresoService.buscarEgresosPorFecha(this.fechaInicio, this.fechaFin).subscribe(
+        egresos => {
+          // console.log('Ingresos encontrados:', ingresos);
+          this.ingresosEncontrados = egresos; // Asignar los ingresos encontrados a la variable del componente
+          this.generatePDF();
+        },
+        error => {
+          console.error('Error al buscar ingresos por fecha:', error);
+        }
+      );
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Ambas fechas son requeridas para la búsqueda',
+      });
+    }
+  }
+
 }

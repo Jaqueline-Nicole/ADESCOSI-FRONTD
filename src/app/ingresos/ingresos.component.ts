@@ -169,7 +169,6 @@ export class IngresosComponent implements OnInit {
           }
         )
         console.log(cuerpo)
-        // this.categorias = Object(response)['datos'];
       }
     );
 
@@ -220,7 +219,7 @@ export class IngresosComponent implements OnInit {
         ingresos => {
           // console.log('Ingresos encontrados:', ingresos);
           this.ingresosEncontrados = ingresos; // Asignar los ingresos encontrados a la variable del componente
-          this.generatePDF(); // Llama a la función generatePDF después de encontrar los ingresos
+          this.generatePDF(); 
         },
         error => {
           console.error('Error al buscar ingresos por fecha:', error);
@@ -234,24 +233,6 @@ export class IngresosComponent implements OnInit {
       });
     }
   }
-
-  //   buscarIngresosPorFecha() {
-  //   if (this.fechaInicio && this.fechaFin) {
-  //     this.ingresoService.buscarIngresosPorFecha(this.fechaInicio, this.fechaFin).subscribe(
-  //       ingresos => {
-  //         console.log('Ingresos encontrados:', ingresos);
-  //         this.ingresosEncontrados = ingresos; // Asignar los ingresos encontrados a la variable del componente
-  //       },
-  //       error => {
-  //         console.error('Error al buscar ingresos por fecha:', error);
-  //       }
-  //     );
-  //   } else {
-  //     console.error('Ambas fechas son requeridas para la búsqueda');
-  //   }
-  // }
-
-
 
 }
 

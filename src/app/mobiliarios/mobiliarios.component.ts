@@ -19,6 +19,7 @@ export class MobiliariosComponent implements OnInit {
   mobiliario!: Mobiliario;
   mobDialog: boolean = false;
   mobDialog1: boolean = false;
+
   title: string = "";
 
   submitted: boolean = false;
@@ -32,8 +33,6 @@ export class MobiliariosComponent implements OnInit {
   //= { id: 9 } 
   miembro: Miembro = this.authService.miembro;
 
-  showDisponibleField: boolean = false;
-
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -46,7 +45,8 @@ export class MobiliariosComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAll();
-    
+    //this.mobiliario.miembro = JSON.parse(JSON.stringify( this.miembro));
+
 
   }
 
@@ -61,8 +61,6 @@ export class MobiliariosComponent implements OnInit {
     this.submitted = false;
     this.mobDialog = true;
     this.mobDialog1 = true;
-
-    this.showDisponibleField = true; 
     this.title = 'Agregar ';
   }
   getMiembros(): void {
@@ -77,8 +75,8 @@ export class MobiliariosComponent implements OnInit {
     this.mobDialog = true;
     this.mobDialog1 = false;
     this.title = "Actualizar ";
+    this.indexSelect = this.mobiliarios.indexOf(mobiliario);
     console.log(this.miembro);
-    this.showDisponibleField = true; 
 
   }
   getEventValue($event: any): string {
@@ -88,11 +86,23 @@ export class MobiliariosComponent implements OnInit {
   hideDialog() {
     this.mobDialog = false;
     this.submitted = false;
-    console.log(this.miembro);
 
   }
   create(): void {
-    console.log(this.miembro);
+
+    const existingMobiliario = this.mobiliarios.find(mobiliario =>
+      mobiliario.descripcion === this.mobiliario.descripcion /* Agrega aquí la condición de tus campos únicos */
+    );
+
+    if (existingMobiliario) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Resultado',
+        detail: 'El mobiliario ya existe', // Puedes personalizar el mensaje según tu caso
+        life: 3000
+      });
+      return;
+    }
 
     if (!this.mobiliario.exitenciaInicial && !this.mobiliario.disponible) {
       this.messageService.add({

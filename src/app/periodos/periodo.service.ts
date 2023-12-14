@@ -11,11 +11,11 @@ import Swal from 'sweetalert2';
 })
 export class PeriodoService {
 
-  private urlEndPoint:string = "http://localhost:8080/api/periodos";
-  private httpHeader:HttpHeaders = new HttpHeaders({'content-type':'aplication/json'})
+  private urlEndPoint: string = "http://localhost:8080/api/periodos";
+  private httpHeader: HttpHeaders = new HttpHeaders({ 'content-type': 'aplication/json' })
 
 
-  constructor(private http:HttpClient,private router: Router, private authService: AuthService) { }
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
   private isNotAutorized(e): boolean {
     if (e.status == 401) {
@@ -32,15 +32,15 @@ export class PeriodoService {
     return false;
   }
 
-  getAll():Observable<Periodo[]>{
+  getAll(): Observable<Periodo[]> {
     return this.http.get<Periodo[]>(this.urlEndPoint);
   }
 
-  getById(id:number):Observable<Periodo>{
+  getById(id: number): Observable<Periodo> {
     return this.http.get<Periodo>(`${this.urlEndPoint}/${id}`);
   }
 
-  save(periodo: Periodo):Observable<any>{
+  save(periodo: Periodo): Observable<any> {
     const token = `Bearer ${this.authService.token}`;
     const headers = new HttpHeaders({
       Authorization: token,
@@ -58,7 +58,21 @@ export class PeriodoService {
       })
     );
   }
-  update(periodo: Periodo, id:number):Observable<any>{
-    return this.http.put(`${this.urlEndPoint}/${id}`, periodo);
+  update(periodo: Periodo, id: number): Observable<any> {
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.put(`${this.urlEndPoint}/${id}`, periodo, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
 }

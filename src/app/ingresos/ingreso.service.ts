@@ -26,7 +26,8 @@ export class IngresoService {
       return true;
     }
     if (e.status == 403) {
-      Swal.fire('Prohibido', `${this.authService.miembro.username}`)
+      Swal.fire('Acceso Incorrecto', 'Prohibido, usuario no autorizado', 'error')
+      // `${this.authService.miembro.nom}`
       this.router.navigate(['/login']);
       return true;
 
@@ -71,7 +72,7 @@ export class IngresoService {
       })
     );
   }
-  
+
   buscarIngresosPorFecha(fechaInicio: string, fechaFin: string): Observable<Ingreso[]> {
     const url = `${this.urlEndPoint}/reportes?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
     return this.http.get<Ingreso[]>(url);
@@ -79,28 +80,27 @@ export class IngresoService {
 
 
   //PDF
+  // ...
+
   imprimir(encabezado: string[], cuerpo: Array<any>, titulo: string, guardar: boolean) {
     const doc = new jsPDF({
-      orientation: "portrait",
-      unit: "px",
-      format: 'letter'
+      orientation: 'portrait',
+      unit: 'px',
+      format: 'letter',
     });
-
-    // Agregar un encabezado personalizado
-    const encabezadoText = "ADESCO (Asociación de Desarrollo Comunal)";
-    doc.setFontSize(14); // Tamaño de fuente para el encabezado
-    doc.text(encabezadoText, doc.internal.pageSize.width / 2, 20, { align: 'center' });
-
+  
     // Configurar márgenes para el título
-    doc.setFontSize(12); // Restaurar el tamaño de fuente para el título
+    doc.setFontSize(14);
+    doc.text('ADESCO (Asociación de Desarrollo Comunal)', doc.internal.pageSize.width / 2, 20, { align: 'center' });
+    doc.setFontSize(12);
     doc.text(titulo, doc.internal.pageSize.width / 2, 40, { align: 'center' });
-
+  
     // Configurar márgenes y estilos para la tabla
     autoTable(doc, {
       head: [encabezado],
       body: cuerpo,
-      startY: 60, // Posición inicial de la tabla
-      margin: { top: 70 }, // Márgenes superiores
+      startY: 60,
+      margin: { top: 70 },
       styles: {
         fontSize: 12,
         textColor: [0, 0, 0],
@@ -110,14 +110,22 @@ export class IngresoService {
       columnStyles: {
         0: { fontStyle: 'bold' },
       },
+      didDrawPage: (data) => {
+        const totalPagesExp = doc.internal.pages.length - 1;
+        const text = `Página ${data.pageNumber} de ${totalPagesExp}`;
+        doc.setFontSize(10);
+        doc.text(text, data.settings.margin.left, doc.internal.pageSize.height - 10);
+        // doc.text('Pie de página personalizado', data.settings.margin.left, doc.internal.pageSize.height - 10, { align: 'center' });
+      },
     });
-
+  
     if (guardar) {
-      const hoy = new Date();
-      doc.save('table.pdf');
+      doc.save('Ingreso ADESCO.pdf');
     } else {
       // No se llama a doc.save si no se debe guardar el PDF
     }
   }
+  
+
 
 }

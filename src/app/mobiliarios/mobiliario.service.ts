@@ -23,14 +23,13 @@ export class MobiliarioService {
       return true;
     }
     if (e.status == 403) {
-      Swal.fire('Prohibido', `${this.authService.miembro.asociado}`)
-      console.log(e);
+      Swal.fire('Acceso Incorrecto', 'Prohibido, usuario no autorizado', 'error')
+      // `${this.authService.miembro.nom}`
       this.router.navigate(['/login']);
       return true;
 
     }
     return false;
-
   }
 
   getAll(): Observable<Mobiliario[]> {

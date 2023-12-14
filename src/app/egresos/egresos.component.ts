@@ -35,6 +35,7 @@ export class EgresosComponent implements OnInit {
 
   miembro: Miembro = this.authService.miembro
   date: Date | undefined;
+  showFechaPagoField: boolean = true;
 
 
 
@@ -84,6 +85,7 @@ export class EgresosComponent implements OnInit {
     this.egrDialong = true;
     this.title = 'Actualiza egreso';
     this.indexSelect = this.egresos.indexOf(egreso);
+    this.showFechaPagoField = false;
 
     const format = 'yyyy-MM-dd'
     const locale = 'es-SV'

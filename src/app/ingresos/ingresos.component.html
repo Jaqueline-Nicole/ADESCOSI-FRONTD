@@ -24,7 +24,8 @@
                             styleClass="mb-4 gap-4" (click)="openNew()"></button>
                         <div class="flex align-items-center justify-content-between ">
                             <label for="fechaInicio">Fecha de inicio:</label>
-                            <input pInputText type="date" [(ngModel)]="fechaInicio" id="fechaInicio" class="mr-8  ml-2" />
+                            <input pInputText type="date" [(ngModel)]="fechaInicio" id="fechaInicio"
+                                class="mr-8  ml-2" />
 
                             <label for="fechaFin">Fecha de fin:</label>
                             <input pInputText type="date" [(ngModel)]="fechaFin" id="fechaFin" class="mr-8  ml-2" />
@@ -37,12 +38,13 @@
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
+                        <th pSortableColumn="" style="min-width:10rem">Registrado por </th>
+                        <th pSortableColumn="" style="min-width:5rem">Descripcion</th>
                         <th pSortableColumn="" style="min-width:5rem">Cantidad</th>
                         <th pSortableColumn="" style="min-width:5rem">Fecha de ingreso</th>
                         <th pSortableColumn="" style="min-width:5rem">Imagen</th>
-                        <th pSortableColumn="" style="min-width:5rem">Descripcion</th>
                         <th pSortableColumn="" style="min-width:10rem">Tipo de ingreso</th>
-                        <th pSortableColumn="" style="min-width:10rem">Registrado por </th>
+
                         <th pSortableColumn="" style="min-width:5rem"></th>
 
 
@@ -50,6 +52,8 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-ingreso>
                     <tr>
+                        <td>{{ ingreso.miembro.asociado.nombre }}</td>
+                        <td>{{ ingreso.descripcion }}</td>
                         <td>{{ ingreso.cantidad }}</td>
                         <td>{{ ingreso.fechaIngreso | date:"dd/MM/yyyy" }}</td>
 
@@ -59,16 +63,14 @@
                         <td *ngIf="ingreso.imagen == null || ingreso.imagen == '' "><img
                                 src=" assets/images/miembros/no.jpg" alt="'No imagen'" width="100" class="shadow-4" />
                         </td>
-                        <td>{{ ingreso.descripcion }}</td>
+
                         <td>{{ ingreso.tipoIngreso.nombre }}</td>
-                        <td>{{ ingreso.miembro.asociado.nombre }}</td>
+
 
                         <td>
                             <button pButton pRipple icon="bi bi-pencil-square"
                                 class="p-button-rounded p-button-success mr-2" (click)="editIng(ingreso)"
                                 style="color: black;"></button>
-
-
                         </td>
                     </tr>
                 </ng-template>
@@ -78,24 +80,23 @@
             styleClass="p-fluid">
 
             <ng-template pTemplate="content">
-                <div class="field">
-                    <label for="name">Cantidad</label><br>
-                    <input type="number" pInputText [(ngModel)]="ingreso.cantidad" required autofocus />
-                    <small class="p-error" *ngIf="submitted && !ingreso.cantidad">Nombre es requerida!</small>
-                </div>
-                <div class="field">
-                    <label for="name">Descripcion</label><br>
+                <div class="field col">
+                    <label for="name">Descripcion:</label><br>
                     <input type="text" pInputText [(ngModel)]="ingreso.descripcion" required autofocus />
                     <small class="p-error" *ngIf="submitted && !ingreso.descripcion">es requerida!</small>
                 </div>
-
                 <div class="field col">
-                    <label for="asociado">Tipo de ingreso</label>
+                    <label for="name">Cantidad a ingresar:</label><br>
+                    <input type="number" pInputText [(ngModel)]="ingreso.cantidad" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !ingreso.cantidad">Nombre es requerida!</small>
+                </div>
+                <div class="field col">
+                    <label for="asociado">Tipo de ingreso:</label>
                     <p-dropdown [options]="tipoIngresos" [(ngModel)]="ingreso.tipoIngreso"
                         optionLabel="nombre"></p-dropdown>
                 </div>
                 <div class="col mb-3">
-                    <label for="formFile">Seleccione una Image</label>
+                    <label for="formFile" class="mb-2">Seleccione una Image: (no es necesario)</label>
                     <input class="form-control" type="file" id="formFile" (change)="seleccionarImagen($event)"
                         accept="image/*" />
                 </div>

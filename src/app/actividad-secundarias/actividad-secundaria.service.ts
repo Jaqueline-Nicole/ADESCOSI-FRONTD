@@ -23,14 +23,13 @@ export class ActividadSecundariaService {
         return true;
       }
       if (e.status == 403) {
-        Swal.fire('Prohibido', `${this.authService.miembro}`)
-        console.log(e);
+        Swal.fire('Acceso Incorrecto', 'Prohibido, usuario no autorizado', 'error')
+        // `${this.authService.miembro.nom}`
         this.router.navigate(['/login']);
         return true;
   
       }
       return false;
-  
     }
 
   getAll(): Observable<ActividadSecundaria[]> {

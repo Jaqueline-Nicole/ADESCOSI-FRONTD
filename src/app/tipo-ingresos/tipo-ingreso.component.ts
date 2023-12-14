@@ -108,7 +108,7 @@ export class TipoIngresoComponent implements OnInit {
     let id = this.tipoIngreso.id;
     this.tipoIngresoService.update(this.tipoIngreso, id).subscribe({
       next: (json) => {
-        Object.assign(this.tipoIngresos[this.indexSelect], json.tipoEgreso);
+        Object.assign(this.tipoIngresos[this.indexSelect], json.tipoIngreso);
         this.messageService.add({ severity: 'success', summary: 'Confirmado', detail: `${json.message}`, life: 1000 })
       },
       error: (err) => {

@@ -12,19 +12,20 @@ import Swal from 'sweetalert2';
 })
 export class TipoActividadService {
 
-  private urlEndPoint:string = "http://localhost:8080/api/tipo-actividad";
-  private httpHeader:HttpHeaders = new HttpHeaders({'content-type':'aplication/json'})
+  private urlEndPoint: string = "http://localhost:8080/api/tipo-actividad";
+  private httpHeader: HttpHeaders = new HttpHeaders({ 'content-type': 'aplication/json' })
 
-  constructor(private http:HttpClient,  private router: Router, private authService: AuthService) { }
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
-   //metodo para la autorizacion
-   private isNotAutorized(e): boolean {
+  //metodo para la autorizacion
+  private isNotAutorized(e): boolean {
     if (e.status == 401) {
       this.router.navigate(['/login'])
       return true;
     }
     if (e.status == 403) {
-      Swal.fire('Prohibido', `${this.authService.miembro.username}`)
+      Swal.fire('Acceso Incorrecto', 'Prohibido, usuario no autorizado', 'error')
+      // `${this.authService.miembro.nom}`
       this.router.navigate(['/login']);
       return true;
 
@@ -32,10 +33,10 @@ export class TipoActividadService {
     return false;
   }
 
-  getAll(): Observable<TipoActividad[]>{
+  getAll(): Observable<TipoActividad[]> {
     return this.http.get<TipoActividad[]>(this.urlEndPoint);
   }
-  save(tipoActividad: TipoActividad):Observable<any>{
+  save(tipoActividad: TipoActividad): Observable<any> {
     const token = `Bearer ${this.authService.token}`;
     const headers = new HttpHeaders({
       Authorization: token
@@ -52,10 +53,38 @@ export class TipoActividadService {
       })
     );
   }
-  update(tipoActividad: TipoActividad, id:number):Observable<any>{
-    return this.http.put(`${this.urlEndPoint}/${id}`, tipoActividad);
+  update(tipoActividad: TipoActividad, id: number): Observable<any> {
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.put(`${this.urlEndPoint}/${id}`, tipoActividad, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
-  delete(id:number):Observable<any>{
-    return this.http.delete(`${this.urlEndPoint}/${id}`)
+  delete(id: number): Observable<any> {
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.delete(`${this.urlEndPoint}/${id}`, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
 }

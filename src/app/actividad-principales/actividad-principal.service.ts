@@ -23,13 +23,13 @@ export class ActividadPrincipalService {
       return true;
     }
     if (e.status == 403) {
-      Swal.fire('Prohibido', `${this.authService.miembro.username}`)
+      Swal.fire('Acceso Incorrecto', 'Prohibido, usuario no autorizado', 'error')
+      // `${this.authService.miembro.nom}`
       this.router.navigate(['/login']);
       return true;
 
     }
     return false;
-
   }
 
   getAll(): Observable<ActividadPrincipal[]> {
@@ -43,7 +43,7 @@ export class ActividadPrincipalService {
     return this.http.post(this.urlEndPoint, principal, { headers: headers }).pipe(
       catchError(e => {
         if (this.isNotAutorized(e)) {
-          return throwError   (() => e);
+          return throwError(() => e);
         }
         if (e.status == 400) {
           return throwError(() => e)
@@ -53,9 +53,37 @@ export class ActividadPrincipalService {
     );
   }
   update(principal: ActividadPrincipal, id: number): Observable<any> {
-    return this.http.put(`${this.urlEndPoint}/${id}`, principal);
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.put(`${this.urlEndPoint}/${id}`, principal, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
   delete(id: number): Observable<any> {
-    return this.http.delete(`${this.urlEndPoint}/${id}`)
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.delete(`${this.urlEndPoint}/${id}`, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
 }

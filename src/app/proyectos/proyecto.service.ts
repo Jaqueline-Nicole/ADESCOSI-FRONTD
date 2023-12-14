@@ -57,12 +57,54 @@ export class ProyectoService {
     );
   }
   update(proyecto: Proyecto, id: number): Observable<any> {
-    return this.http.put<Proyecto[]>(`${this.urlEndPoint}/${id}`, proyecto)
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.put<Proyecto[]>(`${this.urlEndPoint}/${id}`, proyecto, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
   delete(id: number): Observable<any> {
-    return this.http.delete(`${this.urlEndPoint}/${id}`)
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.delete(`${this.urlEndPoint}/${id}`, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
   changeState(estado: string, proyecto: Proyecto): Observable<any> {
-    return this.http.put(`${this.urlEndPoint}/change-state?estado=${estado}`, proyecto);
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.put(`${this.urlEndPoint}/change-state?estado=${estado}`, proyecto, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
 }

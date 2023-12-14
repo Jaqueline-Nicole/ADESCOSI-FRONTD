@@ -26,14 +26,13 @@ export class MiembroService {
       return true;
     }
     if (e.status == 403) {
-      Swal.fire('Prohibido', `${this.authService.miembro}`)
-      console.log(e);
+      Swal.fire('Acceso Incorrecto', 'Prohibido, usuario no autorizado', 'error')
+      // `${this.authService.miembro.nom}`
       this.router.navigate(['/login']);
       return true;
 
     }
     return false;
-
   }
 
   getAll(): Observable<Miembro[]> {
@@ -67,11 +66,35 @@ export class MiembroService {
     const headers = new HttpHeaders({
       Authorization: token
     })
-    return this.http.put(`${this.urlEndPoint}/${id}`, miembro);
+    return this.http.put(`${this.urlEndPoint}/${id}`, miembro, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
 
   changeState(estado: string, miembro: Miembro): Observable<any> {
-    return this.http.put(`${this.urlEndPoint}/change-state?estado=${estado}`, miembro);
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.put(`${this.urlEndPoint}/change-state?estado=${estado}`, miembro, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
   // delete(id:number):Observable<any>{
   //   return this.http.delete(`${this.urlEndPoint}/${id}`)

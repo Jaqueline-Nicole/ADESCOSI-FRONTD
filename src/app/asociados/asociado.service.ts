@@ -18,20 +18,19 @@ export class AsociadoService {
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
-  //metodo para la autorizacion
   private isNotAutorized(e): boolean {
     if (e.status == 401) {
       this.router.navigate(['/login'])
       return true;
     }
     if (e.status == 403) {
-      Swal.fire('Prohibido', `${this.authService.miembro.username}`)
+      Swal.fire('Acceso Incorrecto', 'Prohibido, usuario no autorizado', 'error')
+      // `${this.authService.miembro.nom}`
       this.router.navigate(['/login']);
       return true;
 
     }
     return false;
-
   }
 
 

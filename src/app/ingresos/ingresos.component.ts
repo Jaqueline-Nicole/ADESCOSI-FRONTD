@@ -174,23 +174,6 @@ export class IngresosComponent implements OnInit {
     );
 
   }
-  // generatePDF() {
-  //   this.ingresoService.getAll().subscribe(ingresos => {
-  //     const encabezado = ['Cantidad', 'Descripción', 'Fecha', 'Miembro',];
-  //     const cuerpo = ingresos.map(ingreso => [
-  //       ingreso.cantidad,
-  //       ingreso.descripcion,
-  //       this.formatDate(ingreso.fechaIngreso),
-  //       ingreso.miembro.asociado.nombre,
-  //     ]);
-  //     const titulo = 'Lista de Ingresos';
-  //     const confirmarDescarga = window.confirm('¿Desea descargar el PDF?');
-
-  //     if (confirmarDescarga) {
-  //       this.ingresoService.imprimir(encabezado, cuerpo, titulo, true);
-  //     }
-  //   });
-  // }
   generatePDF() {
     if (this.ingresosEncontrados.length > 0) {
       const encabezado = ['Cantidad', 'Descripción', 'Fecha', 'Registrado por'];

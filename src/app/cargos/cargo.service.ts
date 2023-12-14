@@ -16,14 +16,6 @@ export class CargoService {
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
-  // metodos para la autorizacion
-  private addAuthorizationHeader() {
-    let token = this.authService.token;
-    if (token != null) {
-      return this.httpHeaders.append('Authorization', `Bearer `)
-    }
-    return this.httpHeaders;
-  }
 
   private isNotAutorized(e): boolean {
     if (e.status == 401) {

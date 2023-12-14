@@ -57,22 +57,23 @@
 
             <ng-template pTemplate="content">
 
-                <div class="field ">
+                <div class="field " *ngIf="mobDialog1">
                     <label for="descripcion">Descripcion:</label><br>
                     <input type="text" pInputText [(ngModel)]="mobiliario.descripcion" required autofocus />
                     <small class="p-error" *ngIf="submitted && !mobiliario.descripcion">es requerida!</small>
                 </div>
-                <div class="field ">
+                <div class="field " *ngIf="mobDialog1">
                     <label for="existencia">Existencia:</label><br>
                     <input type="number" pInputText [(ngModel)]="mobiliario.exitenciaInicial" required autofocus />
                     <small class="p-error" *ngIf="submitted && !mobiliario.exitenciaInicial">es requerida!</small>
                 </div>
-                <div class="field">
-                    <label for="disponible">Disponible:</label><br>
+                <div class="field" *ngIf="showDisponibleField">
+                    <label for="disponible" >Disponible:</label><br>
                     <input type="number" pInputText [(ngModel)]="mobiliario.disponible" required autofocus />
                     <small class="p-error" *ngIf="submitted && !mobiliario.disponible">es requerida!</small>
                 </div>
             </ng-template>
+
             <ng-template pTemplate="footer">
                 <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
                     (click)="hideDialog()"></button>
@@ -85,7 +86,6 @@
             </ng-template>
 
         </p-dialog>
-
         <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
     </div>
 </div>

@@ -22,7 +22,8 @@ export class EgresoService {
       return true;
     }
     if (e.status == 403) {
-      Swal.fire('Prohibido', `${this.authService.miembro.username}`)
+      Swal.fire('Acceso Incorrecto', 'Prohibido, usuario no autorizado', 'error')
+      // `${this.authService.miembro.nom}`
       this.router.navigate(['/login']);
       return true;
 
@@ -51,6 +52,20 @@ export class EgresoService {
     );
   }
   update(egreso: Egreso, id: number): Observable<any> {
-    return this.http.put<Egreso[]>(`${this.urlEndPoint}/${id}`, egreso)
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.put<Egreso[]>(`${this.urlEndPoint}/${id}`, egreso, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
 }

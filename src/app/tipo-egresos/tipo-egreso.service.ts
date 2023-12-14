@@ -23,7 +23,8 @@ export class TipoEgresoService {
       return true;
     }
     if (e.status == 403) {
-      Swal.fire('Prohibido', `${this.authService.miembro.username}`)
+      Swal.fire('Acceso Incorrecto', 'Prohibido, usuario no autorizado', 'error')
+      // `${this.authService.miembro.nom}`
       this.router.navigate(['/login']);
       return true;
 
@@ -39,7 +40,7 @@ export class TipoEgresoService {
     const headers = new HttpHeaders({
       Authorization: token
     })
-    return this.http.post(this.urlEndPoint, tipoEgreso,  { headers: headers }).pipe(
+    return this.http.post(this.urlEndPoint, tipoEgreso, { headers: headers }).pipe(
       catchError(e => {
         if (this.isNotAutorized(e)) {
           return throwError(() => e);
@@ -52,10 +53,38 @@ export class TipoEgresoService {
     );
   }
   update(tipoEgreso: TipoEgreso, id: number): Observable<any> {
-    return this.http.put(`${this.urlEndPoint}/${id}`, tipoEgreso);
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.put(`${this.urlEndPoint}/${id}`, tipoEgreso, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
   delete(id: number): Observable<any> {
-    return this.http.delete(`${this.urlEndPoint}/${id}`)
+    const token = `Bearer ${this.authService.token}`;
+    const headers = new HttpHeaders({
+      Authorization: token
+    })
+    return this.http.delete(`${this.urlEndPoint}/${id}`, { headers: headers }).pipe(
+      catchError(e => {
+        if (this.isNotAutorized(e)) {
+          return throwError(() => e);
+        }
+        if (e.status == 400) {
+          return throwError(() => e)
+        }
+        return throwError(() => e);
+      })
+    );
   }
 
 }

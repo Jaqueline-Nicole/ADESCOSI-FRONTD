@@ -18,6 +18,7 @@ export class MobiliariosComponent implements OnInit {
   mobiliarios!: Mobiliario[];
   mobiliario!: Mobiliario;
   mobDialog: boolean = false;
+  mobDialog1: boolean = false;
   title: string = "";
 
   submitted: boolean = false;
@@ -31,6 +32,8 @@ export class MobiliariosComponent implements OnInit {
   //= { id: 9 } 
   miembro: Miembro = this.authService.miembro;
 
+  showDisponibleField: boolean = false;
+
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -43,7 +46,6 @@ export class MobiliariosComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAll();
-    //this.mobiliario.miembro = JSON.parse(JSON.stringify( this.miembro));
     
 
   }
@@ -58,6 +60,9 @@ export class MobiliariosComponent implements OnInit {
     this.mobiliario = {};
     this.submitted = false;
     this.mobDialog = true;
+    this.mobDialog1 = true;
+
+    this.showDisponibleField = true; 
     this.title = 'Agregar ';
   }
   getMiembros(): void {
@@ -70,9 +75,10 @@ export class MobiliariosComponent implements OnInit {
   editMobil(mobiliario: Mobiliario) {
     this.mobiliario = { ...mobiliario };
     this.mobDialog = true;
+    this.mobDialog1 = false;
     this.title = "Actualizar ";
-    this.indexSelect = this.mobiliarios.indexOf(mobiliario);
     console.log(this.miembro);
+    this.showDisponibleField = true; 
 
   }
   getEventValue($event: any): string {
